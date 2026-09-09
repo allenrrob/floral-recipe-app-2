@@ -33,16 +33,16 @@ def ingredients():
 def products():
     return "Products & Recipe Builder (Step 6)"
 
-# --- Quick Calculaotr ---
+# --- Quick Calculator ---
 @app.route('/temp-calculator')
 def temp_calculator():
     return "Quick Design Calculator (Step 7)"
 
 # --- Design Fee Manager ---
-@app.route('/design-fees', METHODS=['GET', 'POST'])
+@app.route('/design-fees', methods=['GET', 'POST'])
 def design_fees():
     if request.method == 'POST':
-        name = requeset.form.get('name')
+        name = request.form.get('name')
         fee_pct = request.form.get('design_fee_percentage')
         if name and fee_pct:
             new_fee = models.DesignType(name=name, design_fee_percentage=float(fee_pct))
@@ -80,8 +80,8 @@ def vendors():
             db.session.commit()
             return redirect('/vendors')
 
-        all_vendors = models.Vendor.query.all()
-        return render_template('vendors.html', vendors=all_vendors)
+    all_vendors = models.Vendor.query.all()
+    return render_template('vendors.html', vendors=all_vendors)
 
 # --- Profit Margin Dashboard ---
 @app.route('/profit-margins')

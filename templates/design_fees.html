@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Design Fees - Floral Recipe<App>% endblock %</App>
+{% block title %}Design Fees - Floral Recipe<App>{% endblock %}</App>
 
 {% block content %}
 <h2>Design Fee & Labor Percentage Manager</h2>
 
 <form method="POST" class="form-inline">
     <input type="text" name="name" placeholder="Style (e.g. Wedding Floral)" required>
+    <input type="number" step="0.1" name="design_fee_percentage" placeholder="Labor Fee % (e.g. 20.0)" required>
     <button type="submit">Add Fee Category</button>
 </form>
 

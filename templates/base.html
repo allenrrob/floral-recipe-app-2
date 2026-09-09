@@ -3,10 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floral Recipe App</title>
+    <title>{% block title %}Floral Recipe App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filemane='css/main.css') }}">
 </head>
 <body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="{{ url_for('index') }}">Floral Recipe App</a>
+        </div>
+        <nav class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('ingredients') }}">Ingredients</a>
+            <a href="{{ url_for('products') }}">Products</a>
+            <a href="{{ url_for('temp_calculator') }}">Quick Calculator</a>
+            <a href="{{ url_for('design_fees') }}">Design Fees</a>
+            <a href="{{ url_for('ingredient_types') }}">Ingredient Types</a>
+            <a href="{{ url_for('vendors') }}">Vendors</a>
+            <a href="{{ url_for('profit_margins') }}">Margins</a>
+        </nav>    
+    </header>
+
+    <main class="container">
     {% block content %}{% endblock %}
+    </main>
 </body>
 </html>

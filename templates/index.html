@@ -1,0 +1,29 @@
+{% extend'base.html' %}
+
+{% block title %} Dashboard - Floral Recipe App{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Floral Operations Dashboard</h1>
+    <p>Manage ingredients, recipe costs, markups, and recommended retail pricing</p>
+</div>
+
+<div class="dashboard-grid">
+    <a href="{{ url_for('ingredients') }}" class="card">
+        <h3>Ingredients</h3>
+        <p>Manage stem costs, bunch package sizes, and supplier links.</p>
+    </a>
+    <a href="{{ url_for('products') }}" class="card">
+        <h3>Products & Recipes</h3>
+        <p>Build product recipes and auto-calculate wholesale costs and retail prices.</p>
+    </a>
+    <a href="{{ url_for('temp_calculator') }}" class="card">
+        <h3>Quick Calculator</h3>
+        <p>Create temporary quotes and pricing estimates on the fly.</p> 
+    </a>
+    <a href="{{ url_for('profit_margins') }}" class="card">
+        <h3>Margin Analytics</h3>
+        <p>Review actual retail prices vs. suggested prices and gross profit margins.</p>
+    </a>
+</div>
+{% endblock %}

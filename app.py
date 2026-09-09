@@ -18,35 +18,52 @@ Scss(app, static_dir='static', asset_dir='static/scss')
 import models 
 
 # App Routes
-# Home page
+# --- Home page ---
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# --- Ingredient Manager ---
 @app.route('/ingredients')
 def ingredients():
     return "Ingredient Manager (Step 5)"
 
+# --- Product Manager ---
 @app.route('/products')
 def products():
     return "Products & Recipe Builder (Step 6)"
 
+# --- Quick Calculaotr ---
 @app.route('/temp-calculator')
 def temp_calculator():
     return "Quick Design Calculator (Step 7)"
 
+# --- Design Fee Manager ---
 @app.route('/design-fees')
 def design_fees():
     return "Design Fee Manager (Step 4)"
 
+# --- Ingredient Type Manager ---
 @app.route('/ingredient-types')
 def ingredient_types():
     return "Ingredient Type Manager (Step 4)"
 
-@app.route('/vendors')
+# --- Vendor Manager ---
+@app.route('/vendors', methods=['GET', 'POST'])
 def vendors():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        if name:
+            new_vendor = models.Vendor(name=name)
+            db.session.add(new_vendor)
+            db.session.commit()
+            return redirect('/vendors')
+
+        all_vendors = models.Vendor.query.all()
+        return render_template('vendors.html', vendors=all_vendors)
     return "Vendor Manager (Step 4)"
 
+# --- Profit Margin Dashboard ---
 @app.route('/profit-margins')
 def profit_margins():
     return "Profit Margin Dashboard (Step 7)"

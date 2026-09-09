@@ -44,9 +44,19 @@ def design_fees():
     return "Design Fee Manager (Step 4)"
 
 # --- Ingredient Type Manager ---
-@app.route('/ingredient-types')
+@app.route('/ingredient-types', methods=['GET', 'POST'])
 def ingredient_types():
-    return "Ingredient Type Manager (Step 4)"
+    if request.method == 'POST':
+        name = request.form.get('name')
+        markup = request.form.get('markup')
+        if name and markup:
+            new_type = models.IngredientType(name=name, markup=float(markup))
+            db.session.add(new_type)
+            db.session.commit()
+            return redirect('/ingredient-types')
+
+    all_types = models.IngredientType.query.all()
+    return render_template('ingredient_types.html', types=all_types)
 
 # --- Vendor Manager ---
 @app.route('/vendors', methods=['GET', 'POST'])
@@ -61,7 +71,6 @@ def vendors():
 
         all_vendors = models.Vendor.query.all()
         return render_template('vendors.html', vendors=all_vendors)
-    return "Vendor Manager (Step 4)"
 
 # --- Profit Margin Dashboard ---
 @app.route('/profit-margins')

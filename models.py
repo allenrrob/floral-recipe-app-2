@@ -52,3 +52,10 @@ class Ingredient(db.Model):
 
     def __repr__(self):
         return f'<Ingredient {self.name}>'
+
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    product_code = db.Column(db.String(20), nullable=False)
+    actual_price = db.Column(db.Float, nullable=True)
+    

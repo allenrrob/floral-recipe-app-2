@@ -80,7 +80,7 @@ def seed_database():
         print(f"Marked Up Cost:          ${product.marked_up_cost:.2f}")
         print(f"Design Fee (20%):        ${product.design_fee:.2f}")
         print(f"Suggested Retail Price:  ${product.suggested_retail_price:.2f}")
-        print(f"Calculated Margin:       ${product.profit_margin_percentage:.1f}%")
+        print(f"Calculated Margin:       {product.profit_margin_percentage:.1f}%")
 
-    if __name__ == '__main__':
+if __name__ == '__main__':
         seed_database()

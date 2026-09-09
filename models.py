@@ -87,7 +87,6 @@ class Product(db.Model):
         return f'<Product {self.name}>'
 
     # --- Costing & Pricing Calculations ---
-    #look up what property tag does, item.relation, why use '''
     @property
     def raw_wholesale_cost(self):
         """Calculates total raw/stem unit costs without markups."""

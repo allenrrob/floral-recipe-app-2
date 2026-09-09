@@ -13,7 +13,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize extensions
 db = SQLAlchemy(app)
-Scss(app, static_folder='static', asset_folder='static/scss')
+Scss(app, static_dir='static', asset_dir='static/scss')
 
 # Import models so SQLAlchemy is aware of them
 import models 

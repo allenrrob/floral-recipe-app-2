@@ -2,7 +2,6 @@ import os
 from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timezone
 
 # Floral Recipe App 
 app = Flask(__name__)
@@ -18,9 +17,39 @@ Scss(app, static_dir='static', asset_dir='static/scss')
 # Import models so SQLAlchemy is aware of them
 import models 
 
+# App Routes
+# Home page
 @app.route('/')
 def index():
-    return "Floral Recipe App is running!"
+    return render_template('index.html')
+
+@app.route('/ingredients')
+def ingredients():
+    return "Ingredient Manager (Step 5)"
+
+@app.route('/products')
+def products():
+    return "Products & Recipe Builder (Step 6)"
+
+@app.route('/temp-calculator')
+def temp_calculator():
+    return "Quick Design Calculator (Step 7)"
+
+@app.route('/design-fees')
+def design_fees():
+    return "Design Fee Manager (Step 4)"
+
+@app.route('/ingredient-types')
+def ingredient_types():
+    return "Ingredient Type Manager (Step 4)"
+
+@app.route('/vendors')
+def vendors():
+    return "Vendor Manager (Step 4)"
+
+@app.route('/profit-margins')
+def profit_margins():
+    return "Profit Margin Dashboard (Step 7)"
 
 if __name__ == '__main__':
     with app.app_context():

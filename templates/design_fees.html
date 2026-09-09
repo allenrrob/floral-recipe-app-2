@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Design Fees - Floral Recipe<App>% endblock %</App>
+
+{% block content %}
+<h2>Design Fee & Labor Percentage Manager</h2>
+
+<form method="POST" class="form-inline">
+    <input type="text" name="name" placeholder="Style (e.g. Wedding Floral)" required>
+    <button type="submit">Add Fee Category</button>
+</form>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Design Classification</th>
+            <th>Labor/Design Fee</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fee in fees %}
+        <tr>
+            <td>{{ fee.id }}</td>
+            <td><strong>{{ fee.name }}</strong></td>
+            <td>{{ fee.design_fee_percentage }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3">No ingredient types found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

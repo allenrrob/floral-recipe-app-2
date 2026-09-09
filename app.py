@@ -39,9 +39,20 @@ def temp_calculator():
     return "Quick Design Calculator (Step 7)"
 
 # --- Design Fee Manager ---
-@app.route('/design-fees')
+@app.route('/design-fees', METHODS=['GET', 'POST'])
 def design_fees():
-    return "Design Fee Manager (Step 4)"
+    if request.method == 'POST':
+        name = requeset.form.get('name')
+        fee_pct = request.form.get('design_fee_percentage')
+        if name and fee_pct:
+            new_fee = models.DesignType(name=name, design_fee_percentage=float(fee_pct))
+            db.session.add(new_fee)
+            db.session.commit()
+            return redirect('/design-fees')
+
+    all_fees = models.DesignType.query.all()
+    return render_template('design_fees.html', fees=all_fees)
+
 
 # --- Ingredient Type Manager ---
 @app.route('/ingredient-types', methods=['GET', 'POST'])

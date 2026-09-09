@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Vendors - Floral Recipe App{% endblock %}
+
+{% block content %}
+<h2>Vendor Management</h2>
+
+<form method="POST" class="form-inline">
+    <input type="text" name="name" placeholder="Vendor Name (e.g. Mayesh Wholesale)" required>
+    <button type="submit">Add Vendor</button>
+</form>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Vendor Name</th>
+            <th>Assigned Ingredients</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vendor in vendors %}
+        <tr>
+            <td>{{ vendor.id }}</td>
+            <td><strong>{{ vendor.name }}</strong></td>
+            <td>{{ vendor.ingredients|length }} items</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3">No vendors found. Add one above!</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

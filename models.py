@@ -53,7 +53,25 @@ class Ingredient(db.Model):
     def __repr__(self):
         return f'<Ingredient {self.name}>'
 
+class ProductIngredient(db.Model):
+    __tablename__ = 'product_ingredients'
+
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+
+    # Foreign Keys
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.id'), nullable=False)
+
+    # Relationships to access related objects directly from a recipe row
+    ingredient = db.relationship('Ingredient')
+
+    def __repr__(self):
+        return f'<ProductIngredient {self.quantity} x {self.ingredient_id}>'
+
 class Product(db.Model):
+    __tablename__ = 'products'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     product_code = db.Column(db.String(20), nullable=False)
@@ -82,6 +100,7 @@ class Product(db.Model):
         for item in self.recipe_items:
             markup = item.ingredient.type_info.markup if item.ingredient.type_info else 1.0
             total += ((item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) * item.quantity) * markup
+        return total
 
     @property
     def design_fee(self):

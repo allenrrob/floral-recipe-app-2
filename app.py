@@ -8,8 +8,8 @@ from datetime import datetime, timezone
 app = Flask(__name__)
 
 # Configure SQLite Database
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize extensions
 db = SQLAlchemy(app)

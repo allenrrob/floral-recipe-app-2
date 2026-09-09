@@ -66,4 +66,21 @@ def seed_database():
         db.session.commit()
 
         # 6. Add Recipe Items (12 Roses, 3 Eucalyptus, 1 Vase)
-        pi1 = ProductIngredient()
+        pi1 = ProductIngredient(product_id=product.id, ingredient_id=i_rose.id, quantity=12)
+        pi2 = ProductIngredient(product_id=product.id, ingredient_id=i_salal.id, quantity=10)
+        pi3 = ProductIngredient(product_id=product.id, ingredient_id=i_vase.id, quantity=1)
+        db.session.add_all([pi1, pi2, pi3])
+        db.session.commit()
+
+        print("Database seeded successfully!\n")
+
+        # Test calculation printouts
+        print(f"--- Calculation Test: '{product.name}' ---")
+        print(f"Raw Wholesale Cost:      ${product.raw_wholesale_cost:.2f}")
+        print(f"Marked Up Cost:          ${product.marked_up_cost:.2f}")
+        print(f"Design Fee (20%):        ${product.design_fee:.2f}")
+        print(f"Suggested Retail Price:  ${product.suggested_retail_price:.2f}")
+        print(f"Calculated Margin:       ${product.profit_margin_percentage:.1f}%")
+
+    if __name__ == '__main__':
+        seed_database()

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Ingredient Types - Floral Recipe<App>% endblock %</App>
+{% block title %}Ingredient Types - Floral Recipe App{% endblock %}
 
 {% block content %}
 <h2>Ingredient Type & Markup Manager</h2>
 
 <form method="POST" class="form-inline">
     <input type="text" name="name" placeholder="Type Name (e.g. Standard Flower)" required>
+    <input type="number" name="markup" placeholder="Markup Multiplier (e.g. 3.5)" required>
     <button type="submit">Add Type</button>
 </form>
 
@@ -25,7 +26,7 @@
             <td>{{ type.markup }}</td>
         </tr>
         {% else %}
-        <tr><td colspan="3">No design fees found.</td></tr>
+        <tr><td colspan="3">No ingredient types found.</td></tr>
         {% endfor %}
     </tbody>
 </table>

@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
-from flask_sqlalchemy import SQLAlchemy
+from extensions import db
 
 # Floral Recipe App 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize extensions
-db = SQLAlchemy(app)
+db.init_app(app)
 Scss(app, static_dir='static', asset_dir='static/scss')
 
 # Import models so SQLAlchemy is aware of them

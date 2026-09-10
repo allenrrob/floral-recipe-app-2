@@ -77,3 +77,48 @@ body {
         }
     }
 }
+
+.form-inline {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    input {
+        padding: 0.6rem;
+        border 1px solid #ccc;
+        border-radius: 4px;
+        flexx: 1;
+    }
+
+    button {
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: darken($primary-color, 8%);
+        }
+    }
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collaspse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+    th, td {
+        padding: 0.8rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    th {
+        background-color: #f1f5f9;
+        color: #475569;
+    }
+}

@@ -54,4 +54,38 @@ body {
       font-size: 0.9rem;
       margin-bottom: 0; }
 
+.form-inline {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem; }
+  .form-inline input {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 1; }
+  .form-inline button {
+    background-color: #2e6f40;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer; }
+    .form-inline button:hover {
+      background-color: #22522f; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+  .data-table th, .data-table td {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee; }
+  .data-table th {
+    background-color: #f1f5f9;
+    color: #475569; }
+
 /*# sourceMappingURL=main.css.map */

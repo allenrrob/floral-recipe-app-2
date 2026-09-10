@@ -10,7 +10,6 @@ body {
     margin: 0;
     padding: 0;
 }
-/// Why do we use '.'? What does flex, space-between, etc. mean?
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -85,9 +84,9 @@ body {
 
     input {
         padding: 0.6rem;
-        border 1px solid #ccc;
+        border: 1px solid #ccc;
         border-radius: 4px;
-        flexx: 1;
+        flex: 1;
     }
 
     button {
@@ -106,7 +105,7 @@ body {
 
 .data-table {
     width: 100%;
-    border-collapse: collaspse;
+    border-collapse: collapse;
     background: white;
     border-radius: 6px;
     overflow: hidden;

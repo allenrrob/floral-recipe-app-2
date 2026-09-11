@@ -15,7 +15,7 @@
         <select name="ingredient_type_id" required>
             <option value="" disabled selected>Select Ingredient Type...</option>
             {% for t in types %}
-            <option value="{{ t.id }}">{{ t.name }} ({{ t.markup }} x Markup)</option>
+            <option value="{{ t.id }}">{{ t.name }} ({{ t.markup }}x Markup)</option>
             {% endfor %}
         </select>
 
@@ -46,7 +46,8 @@
         <tr>
             <td><strong>{{ item.name }}</strong></td>
             <td>{{ item.type_info.name if item.type_info else 'N/A' }}</td>
-            <td>{{ "%.2f"|format(item.cost_per_pkg) }}</td>
+            <td>{{ item.vendor.name if item.vendor.name else 'None' }}</td>
+            <td>${{ "%.2f"|format(item.cost_per_pkg) }}</td>
             <td>{{ item.qty_per_pkg }}</td>
             <td><strong>${{ "%.2f"|format(item.cost_per_pkg / item.qty_per_pkg) }}</strong></td>
         </tr>

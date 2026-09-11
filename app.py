@@ -30,7 +30,7 @@ def ingredients():
         name = request.form.get('name')
         cost_per_pkg = request.form.get('cost_per_pkg')
         qty_per_pkg = request.form.get('qty_per_pkg')
-        type_id = request.form.get('ingredeint_type_id')
+        type_id = request.form.get('ingredient_type_id')
         vendor_id = request.form.get('vendor_id')
 
         if name and cost_per_pkg and qty_per_pkg and type_id:
@@ -38,7 +38,7 @@ def ingredients():
                 name=name,
                 cost_per_pkg=float(cost_per_pkg),
                 qty_per_pkg=float(qty_per_pkg),
-                ingredient_type_id=(type_id),
+                ingredient_type_id=int(type_id),
                 vendor_id=int(vendor_id) if vendor_id else None
             )
 
@@ -48,7 +48,7 @@ def ingredients():
 
     # Query inventory items along with dropdown choices for foreign keys
     all_ingredients = models.Ingredient.query.all()
-    all_types = models.Ingredient.query.all()
+    all_types = models.IngredientType.query.all()
     all_vendors = models.Vendor.query.all()
 
     return render_template(

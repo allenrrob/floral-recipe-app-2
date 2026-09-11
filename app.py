@@ -24,9 +24,40 @@ def index():
     return render_template('index.html')
 
 # --- Ingredient Manager ---
-@app.route('/ingredients')
+@app.route('/ingredients', methods=['GET', 'POST'])
 def ingredients():
-    return "Ingredient Manager (Step 5)"
+    if request.method == 'POST':
+        name = request.form.get('name')
+        cost_per_pkg = request.form.get('cost_per_pkg')
+        qty_per_pkg = request.form.get('qty_per_pkg')
+        type_id = request.form.get('ingredeint_type_id')
+        vendor_id = request.form.get('vendor_id')
+
+        if name and cost_per_pkg and qty_per_pkg and type_id:
+            new_ingredient = models.Ingredient(
+                name=name,
+                cost_per_pkg=float(cost_per_pkg),
+                qty_per_pkg=float(qty_per_pkg),
+                ingredient_type_id=(type_id),
+                vendor_id=int(vendor_id) if vendor_id else None
+            )
+
+            db.session.add(new_ingredient)
+            db.session.commit()
+            return redirect('/ingredients')
+
+    # Query inventory items along with dropdown choices for foreign keys
+    all_ingredients = models.Ingredient.query.all()
+    all_types = models.Ingredient.query.all()
+    all_vendors = models.Vendor.query.all()
+
+    return render_template(
+        'ingredients.html',
+        ingredients=all_ingredients,
+        types=all_types,
+        vendors=all_vendors
+    )
+
 
 # --- Product Manager ---
 @app.route('/products')

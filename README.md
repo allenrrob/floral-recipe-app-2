@@ -71,24 +71,23 @@ floral-recipe-app/
 - [x] Created initial base template (`templates/base.html`) and SCSS stylesheet (`static/scss/main.scss`).
 - [x] Connected local repository to GitHub.
 - [x] Updated project roadmap with full navigation architecture and feature specifications.
-
+- [x] Define **SQLAlchemy Database Models** (`Vendor`, `IngredientType`, `DesignType`, `Ingredient`, `Product`, `ProductIngredient`).
+- [x] Implement database initialization scripts (`db.create_all()`).
+- [x] Write `Vendor` model (Name, Contact Info, Account #).
+- [x] Write `IngredientType` model (Name, Default Markup Multiplier).
+- [x] Write `DesignType` model (Name, Design Fee % / Labor Multiplier).
+- [x] Write `Ingredient` model (Name, Unit Cost, Color, Foreign Keys to `IngredientType` & `Vendor`).
 ---
 
 ### 🟡 Current Focus
-- [ ] Define **SQLAlchemy Database Models** (`Vendor`, `IngredientType`, `DesignType`, `Ingredient`, `Product`, `ProductIngredient`).
-- [ ] Implement database initialization scripts (`db.create_all()`).
+- [ ] Write `Product` model (Name, Description, Target Retail Price, Foreign Key to `DesignType`).
+- [ ] Write `ProductIngredient` / Recipe Join Table (Product ID, Ingredient ID, Quantity required).
 
 ---
 
 ### 🔵 Next Projected Steps
 
 #### Phase 1: Database Schema & Models
-- [ ] Write `Vendor` model (Name, Contact Info, Account #).
-- [ ] Write `IngredientType` model (Name, Default Markup Multiplier).
-- [ ] Write `DesignType` model (Name, Design Fee % / Labor Multiplier).
-- [ ] Write `Ingredient` model (Name, Unit Cost, Color, Foreign Keys to `IngredientType` & `Vendor`).
-- [ ] Write `Product` model (Name, Description, Target Retail Price, Foreign Key to `DesignType`).
-- [ ] Write `ProductIngredient` / Recipe Join Table (Product ID, Ingredient ID, Quantity required).
 
 #### Phase 2: Core Costing & Margin Logic
 - [ ] Build helper methods on models to calculate:

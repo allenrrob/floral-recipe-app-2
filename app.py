@@ -60,9 +60,64 @@ def ingredients():
 
 
 # --- Product Manager ---
-@app.route('/products')
+@app.route('/products', methods=['GET','POST'])
 def products():
-    return "Products & Recipe Builder (Step 6)"
+    if request.method == 'POST':
+        action = request.form.get('action')
+
+        # Action 1: Create a new product base
+        if action == 'create_product':
+            name = request.form.get('name')
+            code = request.form.get('product_code')
+            design_id = request.form.get('design_type_id')
+
+            if name and code and design_id:
+                new_product = models.Product(
+                    name=name,
+                    product_code=code,
+                    design_type_id=int(design_id)
+                )
+                db.session.add(new_product)
+                db.session.commit()
+
+        # Action 2: Add an ingredient stem & quantity to product's recipe
+        elif action == 'add_ingredient':
+            product_id = request.form.get('product_id')
+            ingredient_id = request.form.get('ingredient_id')
+            quantity = request.form.get('quantity')
+
+            if product_id and ingredient_id and quantity:
+                recipe_item = models.ProductIngredient(
+                    product_id=int(product_id),
+                    ingredient_id=int(ingredient_id),
+                    quantity=int(quantity)
+                )
+            db.session.add(recipe_item)
+            db.session.commit()
+
+        # Action 3: Delete a recipe item from an arrangement
+        elif action == 'delete_recipe_item':
+            item_id = request.form.get('recipe_item_id')
+            if item_id:
+                item=models.ProductIngredient.query.get(int(item_id))
+                if item:
+                    db.session.delete(item)
+                    db.session.commit()
+        return redirect('/products')
+
+    # Query all products, ingredients, and design fee styles
+    all_products = models.Product.query.all()
+    all_ingredients = models.Ingredient.query.all()
+    all_design_types = models.DesignType.query.all()
+
+    return render_template(
+        'products.html',
+        products=all_products,
+        ingredients=all_ingredients,
+        design_types=all_design_types
+    )
+
+
 
 # --- Quick Calculator ---
 @app.route('/temp-calculator')

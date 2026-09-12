@@ -141,7 +141,7 @@ def temp_calculator():
         for ing_id, qty_str in zip(selected_ing_ids, quantities):
             if ing_id and qty_str:
                 qty = float(qty_str)
-                ing = models.ingredient.query.get(int(ing_id))
+                ing = models.Ingredient.query.get(int(ing_id))
                 if ing:
                     # Calculate single-stem unit cost & markup
                     unit_cost = ing.cost_per_pkg / ing.qty_per_pkg

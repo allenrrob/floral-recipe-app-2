@@ -120,7 +120,7 @@ def products():
 
 
 # --- Quick Calculator ---
-@app.route('/temp-calculator')
+@app.route('/temp-calculator', methods=['GET', 'POST'])
 def temp_calculator():
     # 1. Fetch available options for the dropdowns
     all_ingredients = models.Ingredient.query.all()
@@ -223,7 +223,23 @@ def vendors():
 # --- Profit Margin Dashboard ---
 @app.route('/profit-margins')
 def profit_margins():
-    return "Profit Margin Dashboard (Step 7)"
+    # 1. Fetch all products containing their linked recipe items
+    products = models.Product.query.all()
+
+    # 2. Aggregate shop-wide financial totals using Python's sum() generator
+    total_wholesale = sum(p.raw_wholesale_cost for p in products)
+    total_retail = sum(p.suggested_retail_price for p in products)
+
+    # 3. Calculate average margin percentage across all products
+    avg_margin = (sum(p.profit_margin_percentage for p in products) / len(products))
+
+    return render_template(
+        'profit_margins.html',
+        products=products,
+        total_wholesale=total_wholesale,
+        total_retail=total_retail,
+        avg_margin=avg_margin
+    )
 
 if __name__ == '__main__':
     with app.app_context():

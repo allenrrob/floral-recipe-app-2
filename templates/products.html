@@ -12,7 +12,7 @@
         <select name="design_type_id" required>
             <option value="" disabled selected>Select Design Fee Style...</option>
             {% for d in design_types %}
-            <option value="{{ d.id }}">{{ d.name }} ({{ d.design_fee_percentage }}% Labor Fee</option>
+            <option value="{{ d.id }}">{{ d.name }} ({{ d.design_fee_percentage }}% Labor Fee)</option>
             {% endfor %}
         </select>
         <button type="submit">Create Arrangement</button>
@@ -43,7 +43,7 @@
             <label>Design Fee ({{ product.design_style.design_fee_percentage if product.design_style else 0 }}%)</label>
             <span>${{ "%.2f"|format(product.design_fee) }}</span>
         </div>
-        <div class="metric-highlight">
+        <div class="metric highlight">
             <label>Suggested Retail Price (SRP)</label>
             <span>${{ "%.2f"|format(product.suggested_retail_price) }}</span>
         </div>
@@ -54,7 +54,7 @@
     </div>
 
     <!-- Form2: Add Stems to Recipe -->
-    <form method="POST" class="form-inline recipe add-form">
+    <form method="POST" class="form-inline recipe-add-form">
         <input type="hidden" name="action" value="add_ingredient">
         <input type="hidden" name="product_id" value="{{ product.id }}">
 
@@ -62,7 +62,7 @@
             <option value="" disabled selected>Select Stem / Supply...</option>
             {% for ing in ingredients %}
             <option value="{{ ing.id }}">{{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/unit)</option>
-            {% endfor %S}
+            {% endfor %}
         </select>
 
         <input type="number" name="quantity" placeholder="Stem Qty" min="1" required>
@@ -88,7 +88,7 @@
                 <td>{{ item.ingredient.type_info.name }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>${{ "%.2f"|format(item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) }}</td>
-                <td>${{ "%.2f"|foramt((item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) * item.quantity) }}</td>
+                <td>${{ "%.2f"|format((item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) * item.quantity) }}</td>
                 <td>
                     <form method="POST" style="display:inline;">
                         <input type="hidden" name="action" value="delete_recipe_item">

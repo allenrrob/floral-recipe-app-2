@@ -122,7 +122,58 @@ def products():
 # --- Quick Calculator ---
 @app.route('/temp-calculator')
 def temp_calculator():
-    return "Quick Design Calculator (Step 7)"
+    # 1. Fetch available options for the dropdowns
+    all_ingredients = models.Ingredient.query.all()
+    all_design_types = models.DesignType.query.all()
+
+    calculated_results = None
+
+    if request.method == 'POST':
+        # 2. Extract selected design style ID and form array inputs
+        design_type_id = request.form.get('design_type_id')
+        selected_ing_ids = request.form.getlist('ingredient_id[]')
+        quantities = request.form.getlist('quantity[]')
+
+        raw_cost = 0.0
+        marked_up_cost = 0.0
+
+        # 3. Iterate through paired array entries (stem ID & quantity)
+        for ing_id, qty_str in zip(selected_ing_ids, quantities):
+            if ing_id and qty_str:
+                qty = float(qty_str)
+                ing = models.ingredient.query.get(int(ing_id))
+                if ing:
+                    # Calculate single-stem unit cost & markup
+                    unit_cost = ing.cost_per_pkg / ing.qty_per_pkg
+                    markup = ing.type_info.markup if ing.type_info else 1.0
+
+                    # Accumulate totals across all temporary recipe rows
+                    raw_cost += unit_cost * qty
+                    marked_up_cost += (unit_cost * qty) * markup
+
+        # 4. Fetch selected design fee percentage and apply labor calculations
+        design_style = models.DesignType.query.get(int(design_type_id)) if design_type_id else None
+        fee_pct = design_style.design_fee_percentage if design_style else 0.0
+
+        design_fee = marked_up_cost * (fee_pct / 100.0)
+        srp = marked_up_cost + design_fee
+        profit_margin = ((srp - raw_cost) / srp * 100) if srp > 0 else 0.0
+
+        # 5. Package results in a dictionary to pass directly into the template
+        calculated_results = {
+            'raw_cost': raw_cost,
+            'marked_up_cost': marked_up_cost,
+            'design_fee': design_fee,
+            'srp': srp,
+            'margin': profit_margin
+        }
+
+    return render_template(
+        'temp_calculator.html',
+        ingredients=all_ingredients,
+        design_types=all_design_types,
+        results=calculated_results
+    )
 
 # --- Design Fee Manager ---
 @app.route('/design-fees', methods=['GET', 'POST'])

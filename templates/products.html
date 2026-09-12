@@ -67,5 +67,43 @@
 
         <input type="number" name="quantity" placeholder="Stem Qty" min="1" required>
         <button type="submit">+ Add Unit</button>
-    </form>
+    </form> 
+
+    <!-- Recipe Items Table -->
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Stem / Ingredient</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Unit Cost</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in product.recipe_items %}
+            <tr>
+                <td><strong>{{ item.ingredient.name }}</strong></td>
+                <td>{{ item.ingredient.type_info.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ "%.2f"|format(item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) }}</td>
+                <td>${{ "%.2f"|foramt((item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) * item.quantity) }}</td>
+                <td>
+                    <form method="POST" style="display:inline;">
+                        <input type="hidden" name="action" value="delete_recipe_item">
+                        <input type="hidden" name="recipe_item_id" value="{{ item.id }}">
+                        <button type="submit" class="btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6">No recipe stems added yet. Add ingredients above!</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+{% else %}
+<p>No products created yet. Add your first arrangement above!</p>
+{% endfor %}
+{% endblock %}

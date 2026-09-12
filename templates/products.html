@@ -51,5 +51,21 @@
             <label>Profit Margin</label>
             <span>{{ "%.1f"|format(product.profit_margin_percentage) }}%</span>
         </div>
-     </div>
+    </div>
+
+    <!-- Form2: Add Stems to Recipe -->
+    <form method="POST" class="form-inline recipe add-form">
+        <input type="hidden" name="action" value="add_ingredient">
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+
+        <select name="ingredient_id" required>
+            <option value="" disabled selected>Select Stem / Supply...</option>
+            {% for ing in ingredients %}
+            <option value="{{ ing.id }}">{{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/unit)</option>
+            {% endfor %S}
+        </select>
+
+        <input type="number" name="quantity" placeholder="Stem Qty" min="1" required>
+        <button type="submit">+ Add Unit</button>
+    </form>
 </div>

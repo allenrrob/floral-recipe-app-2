@@ -92,8 +92,8 @@ def products():
                     ingredient_id=int(ingredient_id),
                     quantity=int(quantity)
                 )
-            db.session.add(recipe_item)
-            db.session.commit()
+                db.session.add(recipe_item)
+                db.session.commit()
 
         # Action 3: Delete a recipe item from an arrangement
         elif action == 'delete_recipe_item':

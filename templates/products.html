@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Products & Recipes - Floral Recipe App{% endblock %}
+
+{% block content %}
+<h2>Products & Recipes</h2>
+<!-- Form 1: Create a New Arrangement Product -->
+<form method="POST" class="form-stacked">
+    <input type="hidden" name="action" value="create_product">
+    <div class="form-row">
+        <input type="text" name="name" placeholder="Arrangement Name (e.g. Garden Romance)" required>
+        <input type="text" name="product_code" placeholder="Code (e.g. VAL-01)" required>
+        <select name="design_type_id" required>
+            <option value="" disabled selected>Select Design Fee Style...</option>
+            {% for d in design_types %}
+            <option value="{{ d.id }}">{{ d.name }} ({{ d.design_fee_percentage }}% Labor Fee</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Create Arrangement</button>
+    </div>
+</form>
+
+<hr>
+
+<!-- Display Products and Recipe Builders -->
+{% for product in products %}
+<div class="product-card">
+    <div class="product-header">
+        <h3>{{ product.name }} <span class="badge">{{ product.product_code }}</span></h3>
+        <span class="design-style">Design Style: {{ product.design_style.name if product.design_style else 'N/A' }}</span>
+    </div>
+
+    <!-- Pricing Summary Cards -->
+     <div class="pricing-summary">
+        <div class="metric">
+            <label>Raw Wholesale Cost</label>
+            <span>${{ "%.2f"|format(product.raw_wholesale_cost) }}</span>
+        </div>
+        <div class="metric">
+            <label>Marked-Up Materials</label>
+            <span>${{ "%.2f"|format(product.marked_up_cost) }}</span>
+        </div>
+        <div class="metric">
+            <label>Design Fee ({{ product.design_style.design_fee_percentage if product.design_style else 0 }}%)</label>
+            <span>${{ "%.2f"|format(product.design_fee) }}</span>
+        </div>
+        <div class="metric-highlight">
+            <label>Suggested Retail Price (SRP)</label>
+            <span>${{ "%.2f"|format(product.suggested_retail_price) }}</span>
+        </div>
+        <div class="metric">
+            <label>Profit Margin</label>
+            <span>{{ "%.1f"|format(product.profit_margin_percentage) }}%</span>
+        </div>
+     </div>
+</div>

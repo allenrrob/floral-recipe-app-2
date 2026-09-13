@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Profit Margins - Floral Recipe App{% endblock %}
+
+{% block content %}
+<h2>Profit Margin Analytics</h2>
+
+<!-- Shop-wide summary metrics -->
+<div class="pricing-summary">
+    <div class="metric">
+        <label>Total Products</label>
+        <span>{{ products|length }}</span>
+    </div>
+    <div class="metric">
+        <label>Total Wholesale Value</label>
+        <span>${{ "%.2f"|format(total_wholesale) }}</span>
+    </div>
+    <div class="metric-highlight">
+        <label>Total Retail Value</label>
+        <span>${{ "%.2f"|format(total_retail) }}</span>
+    </div>
+    <div class="metric">
+        <label>Average Margin</label>
+        <span>{{ "%.1f"|format(avg_margin) }}%</span>
+    </div>
+</div>
+
+<!-- Product profitability table -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Code</th>
+            <th>Raw Cost</th>
+            <th>Design Fee</th>
+            <th>SRP</th>
+            <th>Margin %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td><strong>{{ p.name }}</strong></td>
+            <td>{{ p.product_code }}</td>
+            <td>${{ "%.2f"|format(p.raw_wholesale_cost) }}</td>
+            <td>${{ "%.2f"|format(p.design_fee) }}</td>
+            <td><strong>${{ "%.2f"|format(p.suggested_retail_price) }}</strong></td>
+            <td>{{ "%.1f"|format(p.profit_margin_percentage) }}%</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">No products available for analytics.</td></tr>
+    </tbody>
+</table>
+{% endblock %}

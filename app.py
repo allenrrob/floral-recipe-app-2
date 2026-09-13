@@ -231,7 +231,7 @@ def profit_margins():
     total_retail = sum(p.suggested_retail_price for p in products)
 
     # 3. Calculate average margin percentage across all products
-    avg_margin = (sum(p.profit_margin_percentage for p in products) / len(products))
+    avg_margin = (sum(p.profit_margin_percentage for p in products) / len(products)) if products else 0.0
 
     return render_template(
         'profit_margins.html',

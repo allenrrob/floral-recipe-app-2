@@ -122,4 +122,8 @@ floral-recipe-app/
 - [ ] Add error handling and flash notifications for form submissions.
 - [ ] Optional: Add stem loss / wastage percentage calculation factor to recipes.
 - [ ] Add option in quick calculator to "Add New Item" and default when it opens to one
-- [ ] Add photos for products (Always show) and ingredients (hover). 
+- [ ] Add photos for products (Always show)
+- [ ] Add photos for ingredients (hover)
+- [ ] Add search function for ingredients
+- [ ] Add search function for products
+- [ ] Add ability to sort for profit margin analytics page

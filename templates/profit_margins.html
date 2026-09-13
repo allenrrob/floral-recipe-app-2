@@ -14,7 +14,7 @@
         <label>Total Wholesale Value</label>
         <span>${{ "%.2f"|format(total_wholesale) }}</span>
     </div>
-    <div class="metric-highlight">
+    <div class="metric highlight">
         <label>Total Retail Value</label>
         <span>${{ "%.2f"|format(total_retail) }}</span>
     </div>
@@ -48,6 +48,7 @@
         </tr>
         {% else %}
         <tr><td colspan="6">No products available for analytics.</td></tr>
+        {% endfor %}
     </tbody>
 </table>
 {% endblock %}

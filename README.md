@@ -80,7 +80,7 @@ floral-recipe-app/
 ---
 
 ### 🟡 Current Focus
-- [ ] Write `Product` model (Name, Description, Target Retail Price, Foreign Key to `DesignType`).
+- [x] Write `Product` model (Name, Description, Target Retail Price, Foreign Key to `DesignType`).
 - [ ] Write `ProductIngredient` / Recipe Join Table (Product ID, Ingredient ID, Quantity required).
 
 ---
@@ -121,3 +121,5 @@ floral-recipe-app/
 - [ ] Seed initial database with sample floral data (e.g., Roses, Hydrangeas, Vases, Everyday Arrangement Design Fee).
 - [ ] Add error handling and flash notifications for form submissions.
 - [ ] Optional: Add stem loss / wastage percentage calculation factor to recipes.
+- [ ] Add option in quick calculator to "Add New Item" and default when it opens to one
+- [ ] Add photos for products (Always show) and ingredients (hover). 

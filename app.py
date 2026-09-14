@@ -145,6 +145,16 @@ def temp_calculator():
         # Action: User clicked "+ Add Item"
         if action == 'add_row':
             row_count = current_row_count + 1
+            submitted_rows.append(('','1')) # Append an empty row pair
+
+        # Action: User clicked a Delete Row button ("delete_row_X")
+        elif action and action.startswith('delete_row_'):
+            delete_index = int(action.split('_')[-1])
+            if 0 <= delete_index < len(submitted_rows):
+                submitted_rows.pop(delete_index)
+            # Ensure at least 1 row remain visible
+            row_count = max(1, current_row_count - 1)
+
         else:
             row_count = current_row_count
 
@@ -152,7 +162,11 @@ def temp_calculator():
         marked_up_cost = 0.0
         has_items = False
 
-        # Iterate through paired array entries (stem ID & quantity)
+        # Re-extract filtered lists from submitted_rows after potential deletion
+        select_ing_ids = [row[0] for row in submitted_rows]
+        quantities = [row[1] for row in submitted_rows]
+
+        #Iterate through remaining paired array entries
         for ing_id, qty_str in zip(selected_ing_ids, quantities):
             if ing_id and qty_str:
                 has_items = True

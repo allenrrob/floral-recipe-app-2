@@ -164,15 +164,25 @@ body {
 .recipe-add-form {
   margin-bottom: 1rem; }
 
+button.btn-danger,
 .btn-danger {
-  background-color: #ef4444;
-  color: white;
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
   border: none;
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.8rem; }
+  button.btn-danger:hover,
   .btn-danger:hover {
-    background-color: #dc2626; }
+    background-color: #dc2626 !important; }
+
+button.btn-secondary,
+.btn-secondary {
+  background-color: #64748b !important;
+  color: #ffffff !important; }
+  button.btn-secondary:hover,
+  .btn-secondary:hover {
+    background-color: #475569 !important; }
 
 /*# sourceMappingURL=main.css.map */

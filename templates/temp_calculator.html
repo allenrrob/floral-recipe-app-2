@@ -38,7 +38,11 @@
             </option>
             {% endfor %}
         </select>
-        <input type="number" name="quantity[]" placeholder="Qty" min="1" value ="{{ current_qty }}">
+        <input type="number" name="quantity[]" placeholder="Qty" min="1" value="{{ current_qty }}">
+        <!-- Delete Row Button (Only shown if more than 1 row exists) -->
+         {% if row_count > 1 %}
+         <button type="submit" name="action" value="delete_row_{{ i }}" class="btn-danger" style="padding: 0.4rem 0.8rem;" title="Remove Row">✕</button>
+         {% endif %}
     </div>
     {% endfor %}
 

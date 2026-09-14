@@ -6,42 +6,49 @@
 <p>Estimate costs and retail pricing on the fly without saving a permanent product recipe.</p>
 
 <form method="POST" class="form-stacked">
+    <!-- Hidden row counter -->
+    <input type="hidden" name="row_count" value="{{ row_count }}">
+
+    <!-- Design fee style picker -->
     <div class="form-row">
         <select name="design_type_id" required>
             <option value="" disabled selected>Select Design Fee Style...</option>
             {% for d in design_types %}
-            <option value="{{ d.id }}">{{ d.name }} ({{ d.design_fee_percentage }}% Labor)</option>
+            <option value="{{ d.id }}" {% if selected_design_id|string == d.id|string %}selected{% endif %}>
+                {{ d.name }} ({{ d.design_fee_percentage }}% Labor)
+            </option>
             {% endfor %}
         </select>
-        <button type="submit">Calculate Pricing</button>
+        <button type="submit" name="action" value="calculate">Calculate Pricing</button>
     </div>
 
     <h3>Recipe Scratchpad</h3>
     
-    <!-- Input array row 1 -->
-    <div class="form-row">
-        <select name="ingredient_id[]">
-            <option value="">Select Stem 1...</option>
-            {% for ing in ingredients %}
-            <option value="{{ ing.id }}">{{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/stem)</option>
-            {% endfor %}
-        </select>
-        <input type="number" name="quantity[]" placeholder="Qty" min="1">
-    </div>
+    <!-- Loop through row_count to render active ingredient rows -->
+    {% for i in range(row_count) %}
+    {% set current_ing_id = submitted_rows[i][0] if submitted_rows|length > i else '' %}
+    {% set current_qty = submitted_rows[i][1] if submitted_rows|length > i else '1' %}
 
-    <!-- Input array row 2 -->
     <div class="form-row">
         <select name="ingredient_id[]">
-            <option value="">Select Stem 2...</option>
+            <option value="">Select Stem / Ingredient...</option>
             {% for ing in ingredients %}
-            <option value="{{ ing.id }}">{{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/stem)</option>
+            <option value="{{ ing.id }}" {% if current_ing_id|string == ing.id|string %}selected{% endif %}>
+                {{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/stem)
+            </option>
             {% endfor %}
         </select>
-        <input type="number" name="quantity[]" placeholder="Qty" min="1">
+        <input type="number" name="quantity[]" placeholder="Qty" min="1" value ="{{ current_qty }}">
+    </div>
+    {% endfor %}
+
+    <!-- Button to submit and request a new row -->
+    <div class="form-row">
+        <button type="submit" name="action" value="add_row" class="btn-secondary">+ Add New Item</button>
     </div>
 </form>
 
-<!-- Render pricing summary card only after form submission -->
+<!-- Render pricing summary card only after form calculation -->
 {% if results %}
 <div class="pricing-summary" style="margin-top: 2rem;">
     <div class="metric">

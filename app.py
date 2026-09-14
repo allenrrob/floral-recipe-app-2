@@ -117,8 +117,6 @@ def products():
         design_types=all_design_types
     )
 
-
-
 # --- Quick Calculator ---
 @app.route('/temp-calculator', methods=['GET', 'POST'])
 def temp_calculator():
@@ -130,13 +128,14 @@ def temp_calculator():
     calculated_results = None
     row_count = 1
     submitted_rows=[]
+    selected_design_id = None
 
     if request.method == 'POST':
         action = request.form.get('action')
         current_row_count = int(request.form.get('row_count', 1))
 
         # Extract selected design style ID and form array inputs
-        design_type_id = request.form.get('design_type_id')
+        selected_design_id = request.form.get('design_type_id')
         selected_ing_ids = request.form.getlist('ingredient_id[]')
         quantities = request.form.getlist('quantity[]')
 
@@ -146,15 +145,17 @@ def temp_calculator():
         # Action: User clicked "+ Add Item"
         if action == 'add_row':
             row_count = current_row_count + 1
-
-        elif action == 'calculate':
+        else:
             row_count = current_row_count
-            raw_cost = 0.0
-            marked_up_cost = 0.0
+
+        raw_cost = 0.0
+        marked_up_cost = 0.0
+        has_items = False
 
         # Iterate through paired array entries (stem ID & quantity)
         for ing_id, qty_str in zip(selected_ing_ids, quantities):
             if ing_id and qty_str:
+                has_items = True
                 qty = float(qty_str)
                 ing = models.Ingredient.query.get(int(ing_id))
                 if ing:
@@ -166,22 +167,23 @@ def temp_calculator():
                     raw_cost += unit_cost * qty
                     marked_up_cost += (unit_cost * qty) * markup
 
-        # 4. Fetch selected design fee percentage and apply labor calculations
-        design_style = models.DesignType.query.get(int(design_type_id)) if design_type_id else None
-        fee_pct = design_style.design_fee_percentage if design_style else 0.0
+        # Package results if at least one valid item line exists
+        if has_items:
+            design_style = models.DesignType.query.get(int(selected_design_id)) if selected_design_id else None
+            fee_pct = design_style.design_fee_percentage if design_style else 0.0
 
-        design_fee = marked_up_cost * (fee_pct / 100.0)
-        srp = marked_up_cost + design_fee
-        profit_margin = ((srp - raw_cost) / srp * 100) if srp > 0 else 0.0
+            design_fee = marked_up_cost * (fee_pct / 100.0)
+            srp = marked_up_cost + design_fee
+            profit_margin = ((srp - raw_cost) / srp * 100) if srp > 0 else 0.0
 
-        # 5. Package results in a dictionary to pass directly into the template
-        calculated_results = {
-            'raw_cost': raw_cost,
-            'marked_up_cost': marked_up_cost,
-            'design_fee': design_fee,
-            'srp': srp,
-            'margin': profit_margin
-        }
+            # 5. Package results in a dictionary to pass directly into the template
+            calculated_results = {
+                'raw_cost': raw_cost,
+                'marked_up_cost': marked_up_cost,
+                'design_fee': design_fee,
+                'srp': srp,
+                'margin': profit_margin
+            }
 
     return render_template(
         'temp_calculator.html',
@@ -189,7 +191,8 @@ def temp_calculator():
         design_types=all_design_types,
         results=calculated_results,
         row_count=row_count,
-        submitted_rows=submitted_rows
+        submitted_rows=submitted_rows,
+        selected_design_id=selected_design_id
     )
 
 # --- Design Fee Manager ---

@@ -69,12 +69,14 @@ def products():
         if action == 'create_product':
             name = request.form.get('name')
             code = request.form.get('product_code')
+            image_url = request.form.get('image_url')
             design_id = request.form.get('design_type_id')
 
             if name and code and design_id:
                 new_product = models.Product(
                     name=name,
                     product_code=code,
+                    image_url=image_url if image_url else None,
                     design_type_id=int(design_id)
                 )
                 db.session.add(new_product)

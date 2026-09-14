@@ -1,129 +1,102 @@
-# Floral Recipe Web App 🌸
+Markdown# 🌸 Floral Recipe & Costing Web App
 
-A Flask-based web application designed to calculate flower arrangement recipe costs, handle dynamic markup calculations based on ingredient types, apply design fees, calculate profit margins, and suggest retail prices.
-
----
-
-## 📌 Project Overview & Purpose
-This application serves as a complete recipe costing and pricing management system for a floral design business.
-
-### Core Capabilities:
-- **Ingredient & Cost Management**: Track raw flower stem/unit costs, colors, and vendor sourcing.
-- **Dynamic Markups**: Apply custom markup multipliers categorized by **Ingredient Type** (e.g., standard focal flowers vs. premium imported blooms or hard goods/vases).
-- **Design Fee Rules**: Apply automated labor and design percentages based on **Design Type** (e.g., Everyday Arrangement, Funeral Spray, Wedding Floral Package).
-- **Recipe Management**: Link multiple ingredients with specific stem/unit quantities to a single product recipe.
-- **Suggested Pricing & Margin Analysis**: Calculate wholesale cost, marked-up cost, design fee, profit margins, and recommended retail price dynamically.
-- **Quick Estimating**: Calculate price estimates on the fly without saving them as permanent products.
+A Flask-based web application designed for floral designers and shop owners to track inventory stem costs, manage arrangement recipe formulas, apply category-specific markups and labor fees, and dynamically calculate wholesale costs and suggested retail pricing.
 
 ---
 
-## 🛠️ Tech Stack & Architecture
-- **Backend Framework**: Python 3.10+ / Flask
-- **ORM & Database**: Flask-SQLAlchemy / SQLite (`instance/app.db`)
-- **Styling & UI**: SCSS (compiled via `Flask-Scss`) & HTML5
-- **Version Control**: Git & GitHub
+## 🛠️ Tech Stack & Extensions
+
+* **Backend**: Python 3.12+, Flask
+* **Database & ORM**: SQLite (`app.db`), Flask-SQLAlchemy
+* **Styling**: SCSS compiled directly to standard CSS via `Flask-Scss`
+* **Templating Engine**: Jinja2 (Layout Inheritance & Scaffolding)
+* **Architecture**: Decoupled `extensions.py` pattern (`db = SQLAlchemy()`) to prevent circular imports
 
 ---
 
-## 📂 Project Structure
+## 📐 Data Architecture & Schema
+
+The application relies on six core relational models connected through foreign key constraints and join tables:
+
 ```text
-floral-recipe-app/
-│
-├── .venv/                      # Python virtual environment (ignored in Git)
-├── instance/                   # Local SQLite database location (ignored in Git)
-│   └── app.db
++------------------+         +------------------+         +-------------------+
+|      Vendor      |         |  IngredientType  |         |    DesignType     |
++------------------+         +------------------+         +-------------------+
+| id (PK)          |         | id (PK)          |         | id (PK)           |
+| name             |         | name             |         | name              |
++--------+---------+         | markup           |         | design_fee_pct    |
+         |                   +--------+---------+         +---------+---------+
+         | 1                          | 1                           | 1
+         |                            |                             |
+         | N                          | N                           | N
++--------+----------------------------+---------+         +---------+---------+
+|                    Ingredient                 |         |      Product      |
++-----------------------------------------------+         +-------------------+
+| id (PK)                                       |         | id (PK)           |
+| name                                          |         | name              |
+| cost_per_pkg                                  |         | product_code      |
+| qty_per_pkg                                   |         | actual_price      |
+| vendor_id (FK, optional)                      |         | design_type_id(FK)|
+| ingredient_type_id (FK)                       |         +---------+---------+
++-----------------------+-----------------------+                   | 1
+                        | 1                                         |
+                        |                                           | N
+                        | N                                         |
+               +--------+-------------------------------------------+
+               |               ProductIngredient (Join Table)       |
+               +----------------------------------------------------+
+               | id (PK)                                            |
+               | quantity (stems used in recipe)                    |
+               | product_id (FK)                                    |
+               | ingredient_id (FK)                                 |
+               +----------------------------------------------------+
+               
+---------------------------------------------------------------------------
+
+🧮 Pricing Engine & FormulasAll cost calculations and suggested retail pricing models run dynamically on the Product model via Python @property decorators:Unit / Stem Wholesale Cost:$$\text{Unit Cost} = \frac{\text{cost\_per\_pkg}}{\text{qty\_per\_pkg}}$$Raw Wholesale Cost (Materials Cost):$$\text{Raw Wholesale Cost} = \sum \left( \text{Unit Cost} \times \text{Quantity Used} \right)$$Marked-Up Material Cost:$$\text{Marked-Up Cost} = \sum \left( \text{Unit Cost} \times \text{Quantity Used} \times \text{IngredientType.markup} \right)$$Design / Labor Fee:$$\text{Design Fee} = \text{Marked-Up Cost} \times \left( \frac{\text{DesignType.design\_fee\_percentage}}{100} \right)$$Suggested Retail Price (SRP):$$\text{Suggested Retail Price} = \text{Marked-Up Cost} + \text{Design Fee}$$Gross Profit Margin %:$$\text{Profit Margin \%} = \left( \frac{\text{Suggested Retail Price} - \text{Raw Wholesale Cost}}{\text{Suggested Retail Price}} \right) \times 100$$📁 Project Directory StructurePlaintextfloral-recipe-app/
+├── app.py                  # Main Flask application initialization & routes
+├── extensions.py           # Shared database instance (db = SQLAlchemy())
+├── models.py                # Database schemas, relationships, & pricing properties
+├── seed.py                  # Database seed script for initial lookup data
 ├── static/
-│   ├── css/                    # Compiled CSS output (ignored in Git)
-│   │   └── main.css
-│   └── scss/                   # Source stylesheets
-│       └── main.scss
-├── templates/                  # Jinja2 HTML templates
-│   └── base.html
-├── .gitignore                  # Git ignore definitions
-├── app.py                      # Main application entry point & setup
-├── README.md                   # Project documentation & tracker
-└── requirements.txt            # Python dependency freeze
-```
+│   ├── css/                # Auto-compiled main.css output
+│   └── scss/
+│       └── main.scss       # SCSS stylesheets and component rules
+└── templates/
+    ├── base.html           # Primary layout skeleton & top navigation
+    ├── index.html          # Dashboard homepage
+    ├── vendors.html        # Vendor manager
+    ├── ingredient_types.html # Stem categories & markup manager
+    ├── design_fees.html     # Design labor fee manager
+    ├── ingredients.html     # Inventory stem cost & package manager
+    ├── products.html        # Product arrangement & recipe builder
+    ├── temp_calculator.html # Quick scratchpad pricing calculator
+    └── profit_margins.html  # Profit margin analytics dashboard
+---------------------------------------------------------------------------    
+🚦 Core Feature Status
+[x] Step 1: Database Schema & Setup (models.py, app.py, extensions.py)
 
----
+[x] Step 2: Database Seeding (seed.py)
 
-## 🚦 Navigation & Page Map
+[x] Step 3: Base Navigation & Dashboard (base.html, index.html)
 
-- **Homepage**: Central hub with navigation links to all app modules.
-- **Ingredient Page**: Search, filter, add, and edit floral ingredients and unit costs.
-- **Product & Recipe Page**: Lookup existing product recipes, edit stem counts, and build new arrangements.
-- **Temporary Design Calculator**: Scratchpad calculator to quickly test pricing scenarios without creating permanent database entries.
-- **Design Fee Manager**: Set up and edit percentage-based design/labor fees by design classification.
-- **Ingredient Type Manager**: Manage ingredient classifications and set their baseline markup multipliers.
-- **Profit Margin Analytics**: Review profitability reports and margin percentages across products.
-- **Vendor Manager**: Track supplier details, view catalog items per vendor, and generate vendor purchase/ingredient reports.
+[x] Step 4: Supporting CRUD Managers (vendors.html, ingredient_types.html, design_fees.html, SCSS)
 
----
+[x] Step 5: Ingredient Manager (ingredients.html & /ingredients route)
 
-## 🚦 Project Status & Progress Tracker
+[x] Step 6: Product & Recipe Builder (products.html & /products route)
 
-### 🟢 Completed Steps
-- [x] Initialized Python `.venv` virtual environment in VSCode.
-- [x] Installed base dependencies (`Flask`, `Flask-SQLAlchemy`, `Flask-Scss`).
-- [x] Generated `requirements.txt` via `pip freeze`.
-- [x] Initialized Git repository and set up `.gitignore` to protect virtual environments and databases.
-- [x] Configured `app.py` with Flask instance, SQLite URI, and SCSS compilation.
-- [x] Created initial base template (`templates/base.html`) and SCSS stylesheet (`static/scss/main.scss`).
-- [x] Connected local repository to GitHub.
-- [x] Updated project roadmap with full navigation architecture and feature specifications.
-- [x] Define **SQLAlchemy Database Models** (`Vendor`, `IngredientType`, `DesignType`, `Ingredient`, `Product`, `ProductIngredient`).
-- [x] Implement database initialization scripts (`db.create_all()`).
-- [x] Write `Vendor` model (Name, Contact Info, Account #).
-- [x] Write `IngredientType` model (Name, Default Markup Multiplier).
-- [x] Write `DesignType` model (Name, Design Fee % / Labor Multiplier).
-- [x] Write `Ingredient` model (Name, Unit Cost, Color, Foreign Keys to `IngredientType` & `Vendor`).
----
+[x] Step 7: Quick Calculator & Analytics (temp_calculator.html & profit_margins.html) 
+---------------------------------------------------------------------------
+📌 TODO / Future Enhancements
+[ ] Add option in quick calculator to "Add New Item" dynamically and default to 1 open row
 
-### 🟡 Current Focus
-- [x] Write `Product` model (Name, Description, Target Retail Price, Foreign Key to `DesignType`).
-- [ ] Write `ProductIngredient` / Recipe Join Table (Product ID, Ingredient ID, Quantity required).
+[ ] Add product photos (always visible on product cards)
 
----
+[ ] Add ingredient photos (visible on hover over ingredient names)
 
-### 🔵 Next Projected Steps
+[ ] Add search/filter functionality for inventory ingredients
 
-#### Phase 1: Database Schema & Models
+[ ] Add search/filter functionality for products & recipes
 
-#### Phase 2: Core Costing & Margin Logic
-- [ ] Build helper methods on models to calculate:
-  - **Raw Wholesale Cost**: `sum(Ingredient.unit_cost * Quantity)`
-  - **Marked-up Cost**: `sum(Ingredient.unit_cost * Quantity * IngredientType.markup_multiplier)`
-  - **Design Fee**: `Marked-up Cost * DesignType.design_fee_percentage`
-  - **Suggested Retail Price**: `Marked-up Cost + Design Fee`
-  - **Profit Margin %**: `((Retail Price - Wholesale Cost) / Retail Price) * 100`
-
-#### Phase 3: Route & Template Construction
-- [ ] **Homepage**: Build main dashboard with dynamic navigation links.
-- [ ] **Ingredient Management**: Search/edit interface and vendor association.
-- [ ] **Product & Recipe Manager**: Recipe builder with real-time cost updates.
-- [ ] **Temporary Calculator**: Unsaved sandbox for custom quotes.
-- [ ] **Fee & Type Managers**: CRUD pages for Design Fees and Ingredient Types.
-- [ ] **Vendor Reports Page**: Filter ingredients by supplier and run item lists.
-- [ ] **Profit Margin Dashboard**: High-level view of retail price vs. actual margins.
-
-#### Phase 4: UI/UX & SCSS Styling
-- [ ] Build global navigation header/sidebar in `base.html`.
-- [ ] Style data tables, forms, search inputs, and metric cards using SCSS.
-
----
-
-## 🐞 Bug Tracker & Known Issues
-*No active bugs reported.*
-
----
-
-## 📝 To-Do List & Backlog
-- [ ] Seed initial database with sample floral data (e.g., Roses, Hydrangeas, Vases, Everyday Arrangement Design Fee).
-- [ ] Add error handling and flash notifications for form submissions.
-- [ ] Optional: Add stem loss / wastage percentage calculation factor to recipes.
-- [ ] Add option in quick calculator to "Add New Item" and default when it opens to one
-- [ ] Add photos for products (Always show)
-- [ ] Add photos for ingredients (hover)
-- [ ] Add search function for ingredients
-- [ ] Add search function for products
-- [ ] Add ability to sort for profit margin analytics page
+[ ] Add column sorting capability for the Profit Margin Analytics page

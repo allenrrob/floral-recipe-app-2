@@ -122,22 +122,37 @@ def products():
 # --- Quick Calculator ---
 @app.route('/temp-calculator', methods=['GET', 'POST'])
 def temp_calculator():
-    # 1. Fetch available options for the dropdowns
+    # Fetch available options for the dropdowns
     all_ingredients = models.Ingredient.query.all()
     all_design_types = models.DesignType.query.all()
 
+    # Default results to none and set initial row count to 1
     calculated_results = None
+    row_count = 1
+    submitted_rows=[]
 
     if request.method == 'POST':
-        # 2. Extract selected design style ID and form array inputs
+        action = request.form.get('action')
+        current_row_count = int(request.form.get('row_count', 1))
+
+        # Extract selected design style ID and form array inputs
         design_type_id = request.form.get('design_type_id')
         selected_ing_ids = request.form.getlist('ingredient_id[]')
         quantities = request.form.getlist('quantity[]')
 
-        raw_cost = 0.0
-        marked_up_cost = 0.0
+        # Keep track of user entries across re-renders
+        submitted_rows = list(zip(selected_ing_ids, quantities))
 
-        # 3. Iterate through paired array entries (stem ID & quantity)
+        # Action: User clicked "+ Add Item"
+        if action == 'add_row':
+            row_count = current_row_count + 1
+
+        elif action == 'calculate':
+            row_count = current_row_count
+            raw_cost = 0.0
+            marked_up_cost = 0.0
+
+        # Iterate through paired array entries (stem ID & quantity)
         for ing_id, qty_str in zip(selected_ing_ids, quantities):
             if ing_id and qty_str:
                 qty = float(qty_str)
@@ -172,7 +187,9 @@ def temp_calculator():
         'temp_calculator.html',
         ingredients=all_ingredients,
         design_types=all_design_types,
-        results=calculated_results
+        results=calculated_results,
+        row_count=row_count,
+        submitted_rows=submitted_rows
     )
 
 # --- Design Fee Manager ---

@@ -89,7 +89,7 @@ The application relies on six core relational models connected through foreign k
 [x] Step 7: Quick Calculator & Analytics (temp_calculator.html & profit_margins.html) 
 ---------------------------------------------------------------------------
 📌 TODO / Future Enhancements
-[ ] Add option in quick calculator to "Add New Item" dynamically and default to 1 open row
+[ ] Add delete button to quick calculator 
 
 [ ] Add product photos (always visible on product cards)
 

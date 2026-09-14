@@ -89,14 +89,9 @@ The application relies on six core relational models connected through foreign k
 [x] Step 7: Quick Calculator & Analytics (temp_calculator.html & profit_margins.html) 
 ---------------------------------------------------------------------------
 📌 TODO / Future Enhancements
-[ ] Add delete button to quick calculator 
-
 [ ] Add product photos (always visible on product cards)
-
 [ ] Add ingredient photos (visible on hover over ingredient names)
-
 [ ] Add search/filter functionality for inventory ingredients
-
 [ ] Add search/filter functionality for products & recipes
-
 [ ] Add column sorting capability for the Profit Margin Analytics page
+[ ] Add view for designers that does not show costs

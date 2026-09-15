@@ -1,4 +1,11 @@
-# Ignore the virtual environment
+# Local SQLite Database Files
+*.db
+*.sqlite
+*.sqlite3
+app.db
+
+# Virtual Environment & Python Caches
 venv/
 .venv/
-env/
+__pycache__/
+*.pyc

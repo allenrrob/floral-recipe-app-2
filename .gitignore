@@ -3,6 +3,8 @@
 *.sqlite
 *.sqlite3
 app.db
+instance/
+instance/app.db
 
 # Virtual Environment & Python Caches
 venv/

@@ -147,16 +147,20 @@ body {
   .pricing-summary .metric {
     flex: 1;
     display: flex;
-    flex-direction: column; }
+    flex-direction: column;
+    justify-content: space-between; }
     .pricing-summary .metric label {
       font-size: 0.75rem;
       color: #64748b;
       text-transform: uppercase;
-      letter-spacing: 0.05em; }
+      letter-spacing: 0.05em;
+      min-height: 2.2em;
+      line-height: 1.1; }
     .pricing-summary .metric span {
       font-size: 1.2rem;
       font-weight: bold;
-      color: #1e293b; }
+      color: #1e293b;
+      margin-top: 0.4rem; }
     .pricing-summary .metric.highlight span {
       color: #16a34a; }
 

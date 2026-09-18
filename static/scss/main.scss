@@ -102,13 +102,21 @@ body {
 
     .form-row {
         display: flex;
-        gap: 1rem;
+        flex-wrap: wrap; // Allows fields to wrap cleanly onto a second row if space runs out
+        gap: 0.75rem;
+        align-items: center;
 
         input, select {
             padding: 0.6rem;
             border: 1px solid #ccc;
             border-radius: 4px;
-            flex: 1;
+            flex: 1 1 180px; // Gives each field a minimum width of 180px before wrapping
+            min-width: 0; // Prevents flex child overflow issues
+        }
+
+        button {
+            flex: 0 0 auto;
+            align-self: stretch;
         }
     }
 }

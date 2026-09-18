@@ -75,12 +75,18 @@ body {
   border: 1px solid #e2e8f0; }
   .form-stacked .form-row {
     display: flex;
-    gap: 1rem; }
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center; }
     .form-stacked .form-row input, .form-stacked .form-row select {
       padding: 0.6rem;
       border: 1px solid #ccc;
       border-radius: 4px;
-      flex: 1; }
+      flex: 1 1 180px;
+      min-width: 0; }
+    .form-stacked .form-row button {
+      flex: 0 0 auto;
+      align-self: stretch; }
 
 .data-table {
   width: 100%;

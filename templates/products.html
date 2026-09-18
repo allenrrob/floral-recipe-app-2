@@ -86,10 +86,12 @@
         <input type="hidden" name="action" value="add_ingredient">
         <input type="hidden" name="product_id" value="{{ product.id }}">
 
-        <select name="ingredient_id" required>
-            <option value="" disabled selected>Select Stem / Supply...</option>
+        <select name="ingredient_id" class="searchable-select" required>
+            <option value="" disabled selected>Search Stem / Supply...</option>
             {% for ing in ingredients %}
-            <option value="{{ ing.id }}">{{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/unit)</option>
+            <option value="{{ ing.id }}">
+                {{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/unit)
+            </option>
             {% endfor %}
         </select>
 

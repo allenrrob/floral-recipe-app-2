@@ -30,11 +30,11 @@
     {% set current_qty = submitted_rows[i][1] if submitted_rows|length > i else '1' %}
 
     <div class="form-row">
-        <select name="ingredient_id[]">
-            <option value="">Select Stem / Ingredient...</option>
+        <select name="ingredient_id[]" class="searchable-select">
+            <option value="" disabled selected>Search Stem / Supply...</option>
             {% for ing in ingredients %}
-            <option value="{{ ing.id }}" {% if current_ing_id|string == ing.id|string %}selected{% endif %}>
-                {{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/stem)
+            <option value="{{ ing.id }}" {% if submitted_ing_id == ing.id|string %}selected{% endif %}>
+                {{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/unit)
             </option>
             {% endfor %}
         </select>

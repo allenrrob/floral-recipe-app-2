@@ -219,4 +219,33 @@ button,
     font-weight: 600;
     color: #4a5568; }
 
+.ts-wrapper {
+  flex: 1;
+  width: 100%; }
+  .ts-wrapper .ts-control {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    box-shadow: none; }
+    .ts-wrapper .ts-control input {
+      font-size: 0.95rem; }
+  .ts-wrapper.focus .ts-control {
+    border-color: #2e6f40;
+    box-shadow: 0 0 0 2px rgba(46, 111, 64, 0.2); }
+  .ts-wrapper .ts-dropdown {
+    border-radius: 4px;
+    border: 1px solid #cbd5e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+    .ts-wrapper .ts-dropdown .option {
+      padding: 0.6rem 0.75rem;
+      font-size: 0.95rem; }
+      .ts-wrapper .ts-dropdown .option.active {
+        background-color: #bae2c5;
+        color: #333333; }
+
 /*# sourceMappingURL=main.css.map */

@@ -62,6 +62,9 @@ def ingredients():
 # --- Product Manager ---
 @app.route('/products', methods=['GET','POST'])
 def products():
+    page = request.args.get('page', 1, type=int)
+    search_query = request.args.get('q', '').strip()
+
     if request.method == 'POST':
         action = request.form.get('action')
 
@@ -70,6 +73,7 @@ def products():
             name = request.form.get('name')
             code = request.form.get('product_code')
             image_url = request.form.get('image_url')
+            actual_price = request.form.get('actual_price')
             design_id = request.form.get('design_type_id')
 
             if name and code and design_id:
@@ -77,11 +81,12 @@ def products():
                     name=name,
                     product_code=code,
                     image_url=image_url if image_url else None,
+                    actual_price=float(actual_price) if actual_price else None,
                     design_type_id=int(design_id)
                 )
                 db.session.add(new_product)
                 db.session.commit()
-                return redirect('/products')
+                return redirect(url_for('products', page=page, q=search_query))
 
         # Action: Add an ingredient stem & quantity to product's recipe
         elif action == 'add_ingredient':
@@ -127,7 +132,7 @@ def products():
         query = query.filter(
             or_(
                 models.Product.name.ilike(f'%{search_query}%'),
-                models.Product.product_code.ilike(f'%{search_query}')
+                models.Product.product_code.ilike(f'%{search_query}%')
             )
         )
 

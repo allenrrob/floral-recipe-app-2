@@ -3,12 +3,13 @@
 
 {% block content %}
 <h2>Products & Recipes</h2>
-<!-- Form 1: Create a New Arrangement Product -->
+<!-- Form: Create a New Arrangement Product -->
 <form method="POST" class="form-stacked">
     <input type="hidden" name="action" value="create_product">
     <div class="form-row">
         <input type="text" name="name" placeholder="Arrangement Name (e.g. Garden Romance)" required>
         <input type="text" name="product_code" placeholder="Code (e.g. VAL-01)" required>
+        <input type="number" step="0.01" name="actual_price" placeholder="Actual Price ($)" required>
         <input type="text" name="image_url" placeholder="Image URL https://...">
         <select name="design_type_id" required>
             <option value="" disabled selected>Select Design Fee Style...</option>
@@ -23,11 +24,11 @@
 <hr>
 <!-- Search Bar -->
  <div style="margin-bottom: 1.5rem;">
-    <form method="GET" action="/products" class="form-inline">
+    <form method="GET" action="{{ url_for('products' )}}" class="form-inline">
         <input type="text" name="q" placeholder="Search product name or code..." value="{{ search_query }}">
         <button type="submit">Search</button>
         {% if search_query %}
-        <a href="/products" class="btn-secondary" style="padding: 0.6rem 1rem; text-decoration: none; display: inline-block;">Clear Search</a>
+        <a href="{{ url_for('products') }}" class="btn-secondary" style="padding: 0.6rem 1rem; text-decoration: none; display: inline-block;">Clear Search</a>
         {% endif %}
     </form>
  </div>
@@ -66,16 +67,22 @@
                     <label>Suggested Retail Price (SRP)</label>
                     <span>${{ "%.2f"|format(product.suggested_retail_price) }}</span>
                 </div>
+                {% if product.actual_price %}
+                <div class="metric">
+                    <label>Actual Price</label>
+                    <span>${{ "%.2f"|format(product.actual_price) }}</span>
+                </div>
                 <div class="metric">
                     <label>Profit Margin</label>
                     <span>{{ "%.1f"|format(product.profit_margin_percentage) }}%</span>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
 
-    <!-- Form2: Add Stems to Recipe -->
-    <form method="POST" class="form-inline recipe-add-form">
+    <!-- Form: Add Stems to Recipe -->
+    <form method="POST" action="{{ url_for('products', page=pagination.page, q=search_query) }}" class="form-inline recipe-add-form">
         <input type="hidden" name="action" value="add_ingredient">
         <input type="hidden" name="product_id" value="{{ product.id }}">
 
@@ -106,12 +113,12 @@
             {% for item in product.recipe_items %}
             <tr>
                 <td><strong>{{ item.ingredient.name }}</strong></td>
-                <td>{{ item.ingredient.type_info.name }}</td>
+                <td>{{ item.ingredient.type_info.name if item.ingredient.type_info else 'N/A' }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>${{ "%.2f"|format(item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) }}</td>
                 <td>${{ "%.2f"|format((item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) * item.quantity) }}</td>
                 <td>
-                    <form method="POST" style="display:inline;">
+                    <form method="POST" action="{{ url_for('products', page=pagination.page, q=search_query) }}" style="display:inline;">
                         <input type="hidden" name="action" value="delete_recipe_item">
                         <input type="hidden" name="recipe_item_id" value="{{ item.id }}">
                         <button type="submit" class="btn-danger">Remove</button>
@@ -125,8 +132,15 @@
     </table>
 </div>
 {% else %}
-<p>No products found.</p>
+<p>
+    {% if search_query %}
+    No products found matching "{{ search_query }}". <a href="{{ url_for('products') }}">Clear search</a>
+    {% else %}
+    No products created yet. Add your first arrangement above!
+    {% endif %}
+</p>
 {% endfor %}
+
 <!-- Pagination Controls -->
 {% if pagination.pages > 1 %}
 <div class="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
@@ -140,6 +154,7 @@
 
     {% if pagination.has_next %}
     <a href="{{ url_for('products', page=pagination.next_num, q=search_query) }}"  class="btn-secondary" style="padding: 0.5rem 1rem; text-decoration: none;">Next &raquo;</a>
+    {% endif %}
 </div>
 {% endif %}
 {% endblock %}

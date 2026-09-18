@@ -23,15 +23,15 @@
 
 <hr>
 <!-- Search Bar -->
- <div style="margin-bottom: 1.5rem;">
-    <form method="GET" action="{{ url_for('products' )}}" class="form-inline">
+<div class="search-container">
+    <form method="GET" action="{{ url_for('products') }}" class="form-inline">
         <input type="text" name="q" placeholder="Search product name or code..." value="{{ search_query }}">
         <button type="submit">Search</button>
         {% if search_query %}
-        <a href="{{ url_for('products') }}" class="btn-secondary" style="padding: 0.6rem 1rem; text-decoration: none; display: inline-block;">Clear Search</a>
+        <a href="{{ url_for('products') }}" class="btn-secondary">Clear Search</a>
         {% endif %}
     </form>
- </div>
+</div>
 <!-- Display Products and Recipe Builders -->
 {% for product in products %}
 <div class="product-card">
@@ -143,17 +143,15 @@
 
 <!-- Pagination Controls -->
 {% if pagination.pages > 1 %}
-<div class="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+<div class="pagination">
     {% if pagination.has_prev %}
-    <a href="{{ url_for('products', page=pagination.prev_num, q=search_query) }}" class="btn-secondary" style="padding: 0.5rem 1rem; text-decoration: none;">&laquo; Previous</a>
+    <a href="{{ url_for('products', page=pagination.prev_num, q=search_query) }}" class="btn-secondary">&laquo; Previous</a>
     {% endif %}
 
-    <span style="padding: 0.5rem 1rem; font-weight: bold;">
-        Page {{ pagination.page }} of {{ pagination.pages }} ({{ pagination.total }} total products)
-    </span>
+    <span>Page {{ pagination.page }} of {{ pagination.pages }} ({{ pagination.total }} total products)</span>
 
     {% if pagination.has_next %}
-    <a href="{{ url_for('products', page=pagination.next_num, q=search_query) }}"  class="btn-secondary" style="padding: 0.5rem 1rem; text-decoration: none;">Next &raquo;</a>
+    <a href="{{ url_for('products', page=pagination.next_num, q=search_query) }}" class="btn-secondary">Next &raquo;</a>
     {% endif %}
 </div>
 {% endif %}

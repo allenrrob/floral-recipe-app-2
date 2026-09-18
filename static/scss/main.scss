@@ -1,15 +1,16 @@
 $primary-color: #2e6f40;
 $background-color: #f8f9fa;
 $card-bg: #ffffff;
-$text-color:#333333;
+$text-color: #333333;
 
 body {
-    font-family: 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: $background-color;
     color: $text-color;
     margin: 0;
     padding: 0;
 }
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -17,7 +18,7 @@ body {
     background-color: $primary-color;
     padding: 1rem 2rem;
 
-    .logo a{
+    .logo a {
         color: #fff;
         font-size: 1.25rem;
         font-weight: bold;
@@ -35,13 +36,12 @@ body {
             text-decoration: underline;
         }
     }
-
 }
 
 .container {
     max-width: 1100px;
     margin: 2rem auto;
-    padding: 0 1 rem;
+    padding: 0 1rem;
 }
 
 .dashboard-grid {
@@ -88,38 +88,6 @@ body {
         border-radius: 4px;
         flex: 1;
     }
-
-    button {
-        background-color: $primary-color;
-        color: white;
-        border: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: 4px;
-        cursor: pointer;
-
-        &:hover {
-            background-color: darken($primary-color, 8%);
-        }
-    }
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-
-    th, td {
-        padding: 0.8rem 1rem;
-        text-align: left;
-        border-bottom: 1px solid #eee;
-    }
-    th {
-        background-color: #f1f5f9;
-        color: #475569;
-    }
 }
 
 .form-stacked {
@@ -142,20 +110,25 @@ body {
             border-radius: 4px;
             flex: 1;
         }
+    }
+}
 
-        button {
-            background-color: $primary-color;
-            color: white;
-            border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 
-            &:hover {
-                background-color: darken($primary-color, 8%);
-            }
-        }
+    th, td {
+        padding: 0.8rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    th {
+        background-color: #f1f5f9;
+        color: #475569;
     }
 }
 
@@ -186,6 +159,7 @@ body {
             font-size: 0.9rem;
         }
     }
+
     .product-card-body {
         display: flex;
         gap: 1.5rem;
@@ -248,27 +222,68 @@ body {
 .recipe-add-form {
     margin-bottom: 1rem;
 }
-button.btn-danger,
-.btn-danger {
-    background-color: #ef4444 !important;
-    color: #ffffff !important;
+
+// --- Reusable Button Components ---
+button, 
+.btn-primary {
+    padding: 0.6rem 1.2rem;
+    background-color: $primary-color;
+    color: #ffffff;
     border: none;
-    padding: 0.3rem 0.6rem;
     border-radius: 4px;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 0.8rem;
+    transition: background-color 0.2s ease-in-out;
 
     &:hover {
-        background-color: #dc2626 !important;
+        background-color: darken($primary-color, 8%);
     }
 }
 
-button.btn-secondary,
 .btn-secondary {
-    background-color: #64748b !important;
-    color: #ffffff !important;
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    background-color: #64748b;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
 
     &:hover {
-        background-color: #475569 !important;
+        background-color: #475569;
+        color: #ffffff;
+    }
+}
+
+.btn-danger {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background-color: #ef4444;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+        background-color: #dc2626;
+    }
+}
+
+// --- Pagination Component ---
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 2rem 0;
+
+    span {
+        font-weight: 600;
+        color: #4a5568;
     }
 }

@@ -116,7 +116,10 @@ class Product(db.Model):
     @property
     def profit_margin_percentage(self):
         """Calculates profit margin percentage based on suggested retail price"""
-        srp = self.suggested_retail_price
-        if srp == 0: 
+        effective_price = self.actual_price if self.actual_price and self.actual_price > 0 else self.suggested_retail_price
+
+        if not effective_price or effective_price <= 0:
             return 0.0
-        return ((srp - self.raw_wholesale_cost) / srp) * 100.0
+
+        margin = ((effective_price - self.raw_wholesale_cost) / effective_price) * 100.0
+        return max(margin, 0.0)

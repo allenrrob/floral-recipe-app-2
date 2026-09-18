@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from extensions import db
+from sqlalchemy import or_
 
 # Floral Recipe App 
 app = Flask(__name__)

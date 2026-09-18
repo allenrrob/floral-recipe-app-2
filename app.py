@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, url_for
 from flask_scss import Scss
 from extensions import db
 from sqlalchemy import or_
@@ -119,6 +119,25 @@ def products():
                     page = request.args.get('page', 1, type=int)
                     q = request.args.get('q', '')
                     return redirect(url_for('products', page=page, q=q))
+
+        elif action == 'edit_product':
+            product_id = request.form.get('product_id')
+            name = request.form.get('name')
+            code = request.form.get('product_code')
+            actual_price = request.form.get('actual_price')
+            image_url = request.form.get('image_url')
+            design_id = request.form.get('design_type_id')
+
+            if product_id and name and code and design_id:
+                product = models.Product.query.get(int(product_id))
+                if product: 
+                    product.name = name
+                    product.product_code = code
+                    product.actual_price = float(actual_price) if actual_price else None
+                    product.image_url = image_url if image_url else None
+                    product.design_type_id = int(design_id)
+                    db.session.commit()
+            return redirect(url_for('products', page=page, q=search_query))
 
     # GET Request handling (Search + Pagination)
     search_query = request.args.get('q', '').strip()

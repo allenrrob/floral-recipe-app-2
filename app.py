@@ -65,7 +65,7 @@ def products():
     if request.method == 'POST':
         action = request.form.get('action')
 
-        # Action 1: Create a new product base
+        # Action: Create a new product base
         if action == 'create_product':
             name = request.form.get('name')
             code = request.form.get('product_code')
@@ -81,8 +81,9 @@ def products():
                 )
                 db.session.add(new_product)
                 db.session.commit()
+                return redirect('/products')
 
-        # Action 2: Add an ingredient stem & quantity to product's recipe
+        # Action: Add an ingredient stem & quantity to product's recipe
         elif action == 'add_ingredient':
             product_id = request.form.get('product_id')
             ingredient_id = request.form.get('ingredient_id')
@@ -96,8 +97,12 @@ def products():
                 )
                 db.session.add(recipe_item)
                 db.session.commit()
+                # Retain search and page params on redirect
+                page = request.args.get('page', 1, type=int)
+                q = request.args.get('q', '')
+                return redirect(url_for('products', page=page, q=q))
 
-        # Action 3: Delete a recipe item from an arrangement
+        # Action: Delete a recipe item from an arrangement
         elif action == 'delete_recipe_item':
             item_id = request.form.get('recipe_item_id')
             if item_id:
@@ -105,16 +110,44 @@ def products():
                 if item:
                     db.session.delete(item)
                     db.session.commit()
-        return redirect('/products')
+                    page = request.args.get('page', 1, type=int)
+                    q = request.args.get('q', '')
+                    return redirect(url_for('products', page=page, q=q))
 
-    # Query all products, ingredients, and design fee styles
-    all_products = models.Product.query.all()
+    # GET Request handling (Search + Pagination)
+    search_query = request.args.get('q', '').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = 25 # Limits display to 25 products per page
+
+    # Base query
+    query = models.Product.query
+    
+    # Apply search filter if query string is present
+    if search_query:
+        query = query.filter(
+            or_(
+                models.Product.name.ilike(f'%{search_query}%'),
+                models.Product.product_code.ilike(f'%{search_query}')
+            )
+        )
+
+    # Execute pagination (returns a Pagination object)
+    pagination = query.order_by(models.Product.id.desc()).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
+
+    # Query products on page, all ingredients, and design fee styles
+    products_on_page = pagination.items
     all_ingredients = models.Ingredient.query.all()
     all_design_types = models.DesignType.query.all()
 
     return render_template(
         'products.html',
-        products=all_products,
+        products=products_on_page,
+        pagination=pagination,
+        search_query=search_query,
         ingredients=all_ingredients,
         design_types=all_design_types
     )

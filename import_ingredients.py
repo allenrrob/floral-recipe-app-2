@@ -50,7 +50,7 @@ def import_ingredients_from_excel(file_path):
 
         # Commit all new records to the database
         db.session.commit()
-        print(f" Success! Imported {imported_count} ingredients ({skipped_count} skipped).")
+        print(f"✅ Success! Imported {imported_count} ingredients ({skipped_count} skipped).")
 
 if __name__ == '__main__':
     # Update 'ingredients.xlsx' to your actual file path

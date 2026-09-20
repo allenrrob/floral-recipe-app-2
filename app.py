@@ -45,7 +45,7 @@ def ingredients():
                 new_ingredient = models.Ingredient(
                     name=name,
                     cost_per_pkg=float(cost_per_pkg),
-                    qty_per_pkg=int(qty_per_pkg),
+                    qty_per_pkg=float(qty_per_pkg),
                     ingredient_type_id=int(type_id),
                     vendor_id=int(vendor_id) if vendor_id else None
                 )
@@ -68,7 +68,7 @@ def ingredients():
                 if ingredient:
                     ingredient.name = name.strip()
                     ingredient.cost_per_pkg = float(cost_per_pkg)
-                    ingredient.qty_per_pkg = int(qty_per_pkg)
+                    ingredient.qty_per_pkg = float(qty_per_pkg)
                     ingredient.ingredient_type_id = int(type_id) if type_id else None
                     ingredient.vendor_id = int(vendor_id) if vendor_id else None
 

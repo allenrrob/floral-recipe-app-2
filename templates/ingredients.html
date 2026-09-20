@@ -4,21 +4,19 @@
 {% block content %}
 <h2>Ingredient Inventory Manager</h2>
 
+<!-- Form: Add New Ingredient-->
 <form method="POST" class="form-stacked">
+    <input type="hidden" name="action" value="create_ingredient">
     <div class="form-row">
         <input type="text" name="name" placeholder="Item Name (e.g. Ecuadorian Rose)" required>
         <input type="number" step="0.01" name="cost_per_pkg" placeholder="Package Cost ($)" required>
         <input type="number" step="0.1" name="qty_per_pkg" placeholder="Qty per Package (e.g. 25)" required>
-    </div>
-
-    <div class="form-row">
         <select name="ingredient_type_id" required>
             <option value="" disabled selected>Select Ingredient Type...</option>
             {% for t in types %}
             <option value="{{ t.id }}">{{ t.name }} ({{ t.markup }}x Markup)</option>
             {% endfor %}
         </select>
-
         <select name="vendor_id">
             <option value="">Select Vendor (Optional)...</option>
             {% for v in vendors %}
@@ -29,7 +27,7 @@
         <button type="submit">Add Ingredient</button>
     </div>
 </form>
-
+<!-- All Ingredients Data Table -->
 <table class="data-table">
     <thead>
         <tr>
@@ -39,21 +37,67 @@
             <th>Package Price</th>
             <th>Pkg Qty</th>
             <th>Cost / Unit</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        {% for item in ingredients %}
+        {% for ing in ingredients %}
         <tr>
-            <td><strong>{{ item.name }}</strong></td>
-            <td>{{ item.type_info.name if item.type_info else 'N/A' }}</td>
-            <td>{{ item.vendor.name if item.vendor.name else 'None' }}</td>
-            <td>${{ "%.2f"|format(item.cost_per_pkg) }}</td>
-            <td>{{ item.qty_per_pkg }}</td>
-            <td><strong>${{ "%.2f"|format(item.cost_per_pkg / item.qty_per_pkg) }}</strong></td>
+            <td><strong>{{ ing.name }}</strong></td>
+            <td>{{ ing.type_info.name if ing.type_info else 'N/A' }}</td>
+            <td>{{ ing.vendor.name if ing.vendor else 'None' }}</td>
+            <td>${{ "%.2f"|format(ing.cost_per_pkg) }}</td>
+            <td>{{ ing.qty_per_pkg }}</td>
+            <td><strong>${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}</strong></td>
+            <td>
+                <button type="button" class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="toggleEditRow({{ ing.id }})">Edit</button>
+            </td>
         </tr>
+
+        <!-- Hidden Inline Edit Drawer Row -->
+         <tr id="edit-row-{{ ing.id }}" style="display:none; background-color: #f8fafc;">
+            <td colspan="7">
+                <form method="POST" action="{{ url_for('ingredients', page=pagination.page, q=search_query) }}" class="form-inline" style="margin: 0.5rem 0;">
+                    <input type="hidden" name="action" value="edit_ingredient">
+                    <input type="hidden" name="ingredient_id" value="{{ ing.id }}">
+                    <input type="text" name="name" value="{{ ing.name }}" required placeholder="Ingredient Name">
+                    <input type="number" step="0.01" name="cost_per_pkg" value="{{ ing.cost_per_pkg }}" required placeholder="Pkg Cost ($)">
+                    <input type="number" name="qty_per_pkg" value="{{ ing.qty_per_pkg }}" required placeholder="Pkg Qty">
+
+                    <select name="ingredient_type_id">
+                        <option value="">Select Type...</option>
+                        {% for t in types %}
+                        <option value="{{ t.id }}" {% if ing.ingredient_type_id == t.id %}selected{% endif %}>{{ t.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="vendor_id">
+                        <option value="">Select Vendor (Optional)...</option>
+                        {% for v in vendors %}
+                        <option value="{{ v.id }}" {% if ing.vendor_id == v.id %}selected{% endif %}>{{ v.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit">Save</button>
+                    <button type="button" class="btn-secondary" onclick="toggleEditRow({{ ing.id }})">Cancel</button>
+                </form>
+            </td>
+         </tr>
         {% else %}
-        <tr><td colspan="6">No ingredients found in inventory. Add one above!</td></tr>
+        <tr><td colspan="7">No ingredients found in inventory. Add one above!</td></tr>
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Toggle Script -->
+<script>
+    function toggleEditRow(ingId) {
+        var row = document.getElementById('edit-row-' + ingId);
+        if (row.style.display === 'none' || row.style.display === '') {
+        row.style.display = 'table-row';
+        } else {
+        row.style.display = 'none';
+        }
+    }
+</script>
 {% endblock %}

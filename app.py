@@ -4,6 +4,7 @@ from flask_scss import Scss
 from extensions import db
 from sqlalchemy import or_
 from routes.ingredients import ingredients_bp
+from routes.vendors import vendors_bp
 
 # Floral Recipe App 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ db.init_app(app)
 Scss(app, static_dir='static', asset_dir='static/scss')
 
 app.register_blueprint(ingredients_bp)
+app.register_blueprint(vendors_bp)
 
 # Import models so SQLAlchemy is aware of them
 import models 
@@ -285,37 +287,6 @@ def ingredient_types():
         
     all_types = models.IngredientType.query.order_by(models.IngredientType.name.asc()).all()
     return render_template('ingredient_types.html', types=all_types)
-
-# --- Vendor Manager ---
-@app.route('/vendors', methods=['GET', 'POST'])
-def vendors():
-    if request.method == 'POST':
-        action = request.form.get('action')
-
-        # Action: Create a new vendor
-        if action == 'create_vendor':
-            name = request.form.get('name')
-            if name:
-                new_vendor = models.Vendor(name=name)
-                db.session.add(new_vendor)
-                db.session.commit()
-                return redirect('/vendors')
-
-        elif action == 'edit_vendor':
-            vendor_id = request.form.get('vendor_id')
-            name = request.form.get('name')
-
-            if vendor_id and name:
-                vendor = models.Vendor.query.get(int(vendor_id))
-                if vendor:
-                    vendor.name = name.strip()
-
-                    db.session.commit()
-            return redirect('/vendors')
-
-
-    all_vendors = models.Vendor.query.order_by(models.Vendor.name.asc()).all()
-    return render_template('vendors.html', vendors=all_vendors)
 
 # --- Profit Margin Dashboard ---
 @app.route('/profit-margins')

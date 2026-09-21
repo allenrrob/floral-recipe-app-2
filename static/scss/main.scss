@@ -102,16 +102,17 @@ body {
 
     .form-row {
         display: flex;
-        flex-wrap: wrap; // Allows fields to wrap cleanly onto a second row if space runs out
+        flex-wrap: wrap; 
         gap: 0.75rem;
         align-items: center;
+        overflow: visible; // Prevents form rows from clipping the dropdown menu
 
         input, select {
             padding: 0.6rem;
             border: 1px solid #ccc;
             border-radius: 4px;
-            flex: 1 1 180px; // Gives each field a minimum width of 180px before wrapping
-            min-width: 0; // Prevents flex child overflow issues
+            flex: 1 1 180px; 
+            min-width: 0; 
         }
 
         button {
@@ -126,17 +127,26 @@ body {
     border-collapse: collapse;
     background: white;
     border-radius: 6px;
-    overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 
     th, td {
         padding: 0.8rem 1rem;
         text-align: left;
         border-bottom: 1px solid #eee;
+        overflow: visible; // Allows Tom-Select menu to spill over cell boundaries
     }
+
     th {
         background-color: #f1f5f9;
         color: #475569;
+    }
+
+    tr {
+        &:focus-within,
+        &:hover {
+            position: relative;
+            z-index: 20; // Keeps the active row above lower table rows
+        }
     }
 }
 
@@ -231,7 +241,6 @@ body {
     }
 }
 
-
 .recipe-add-form {
     margin-bottom: 1rem;
 }
@@ -303,44 +312,52 @@ button,
 
 // --- Tom-Select Searchable Dropdown Styling Overrides ---
 .ts-wrapper {
-  flex: 1; // Allows the dropdown to expand properly inside flex rows (.form-row, .form-inline)
-  width: 100%;
+    flex: 1;
+    width: 100%;
+    position: relative;
+    z-index: 10;
 
-  .ts-control {
-    padding: 0.6rem 0.75rem; // Matches standard form input padding
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    min-height: 42px; // Ensures height matches adjacent text inputs and buttons
-    display: flex;
-    align-items: center;
-    background-color: #ffffff;
-    box-shadow: none;
+    .ts-control {
+        padding: 0.6rem 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.95rem;
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        background-color: #ffffff;
+        box-shadow: none;
 
-    input {
-      font-size: 0.95rem;
+        input {
+            font-size: 0.95rem;
+        }
     }
-  }
 
-  &.focus .ts-control {
-    border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba(46, 111, 64, 0.2); // Soft focus ring using $primary-color
-  }
-
-  // Dropdown options list popup
-  .ts-dropdown {
-    border-radius: 4px;
-    border: 1px solid #cbd5e0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-    .option {
-      padding: 0.6rem 0.75rem;
-      font-size: 0.95rem;
-
-      &.active {
-        background-color: lighten($primary-color, 50%);
-        color: $text-color;
-      }
+    &.focus .ts-control {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba(46, 111, 64, 0.2);
     }
-  }
+
+    // Dropdown options list popup with high z-index stacking fix
+    .ts-dropdown {
+        position: absolute;
+        top: 100% !important;
+        left: 0;
+        right: 0;
+        z-index: 9999 !important; // Ensures menu renders above adjacent buttons and inputs
+        border-radius: 4px;
+        border: 1px solid #cbd5e0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        background-color: #ffffff;
+
+        .option {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.95rem;
+
+            &.active {
+                background-color: lighten($primary-color, 50%);
+                color: $text-color;
+            }
+        }
+    }
 }

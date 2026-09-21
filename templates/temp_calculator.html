@@ -1,81 +1,88 @@
 {% extends 'base.html' %}
-{% block title %}Quick Calculator - Floral Recipe App {% endblock %}
+{% block title %}Quick Calculator - Floral Recipe App{% endblock %}
 
 {% block content %}
-<h2>Quick Design Calculator</h2>
-<p>Estimate costs and retail pricing on the fly without saving a permanent product recipe.</p>
+<h2>Quick Arrangement Cost Calculator</h2>
 
-<form method="POST" class="form-stacked">
-    <!-- Hidden row counter -->
+<form method="POST" action="{{ url_for('temp_calculator') }}" class="form-stacked">
+    <!-- Row count tracker to maintain form state -->
     <input type="hidden" name="row_count" value="{{ row_count }}">
 
-    <!-- Design fee style picker -->
-    <div class="form-row">
-        <select name="design_type_id" required>
-            <option value="" disabled selected>Select Design Fee Style...</option>
+    <!-- Labor Style Selection -->
+    <div style="margin-bottom: 1.5rem;">
+        <label><strong>Design Style (Labor Fee %):</strong></label>
+        <select name="design_type_id" style="padding: 0.6rem; border-radius: 4px; border: 1px solid #ccc; width: 100%; max-width: 400px; margin-top: 0.5rem;">
+            <option value="">Select Labor Fee Style...</option>
             {% for d in design_types %}
-            <option value="{{ d.id }}" {% if selected_design_id|string == d.id|string %}selected{% endif %}>
-                {{ d.name }} ({{ d.design_fee_percentage }}% Labor)
+            <option value="{{ d.id }}" {% if selected_design_id and selected_design_id|int == d.id|int %}selected{% endif %}>
+                {{ d.name }} ({{ d.design_fee_percentage }}% Labor Fee)
             </option>
             {% endfor %}
         </select>
-        <button type="submit" name="action" value="calculate">Calculate Pricing</button>
     </div>
 
-    <h3>Recipe Scratchpad</h3>
-    
-    <!-- Loop through row_count to render active ingredient rows -->
-    {% for i in range(row_count) %}
-    {% set current_ing_id = submitted_rows[i][0] if submitted_rows|length > i else '' %}
-    {% set current_qty = submitted_rows[i][1] if submitted_rows|length > i else '1' %}
-
-    <div class="form-row">
-        <select name="ingredient_id[]" class="searchable-select">
-            <option value="" disabled selected>Search Stem / Supply...</option>
-            {% for ing in ingredients %}
-            <option value="{{ ing.id }}" {% if submitted_ing_id == ing.id|string %}selected{% endif %}>
-                {{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/unit)
-            </option>
+    <!-- Dynamic Stem & Supply Item Rows -->
+    <table class="data-table" style="margin-bottom: 1rem; width: 100%;">
+        <thead>
+            <tr>
+                <th>Stem / Supply Item</th>
+                <th style="width: 140px;">Qty</th>
+                <th style="width: 100px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ing_id, qty in submitted_rows %}
+            <tr>
+                <td>
+                    <select name="ingredient_id[]" class="searchable-select">
+                        <option value="">Search stem or supply...</option>
+                        {% for ing in ingredients %}
+                        <option value="{{ ing.id }}" {% if ing_id and ing_id|int == ing.id|int %}selected{% endif %}>
+                            {{ ing.name }} (${{ "%.2f"|format(ing.cost_per_pkg / ing.qty_per_pkg) }}/unit)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" step="0.1" name="quantity[]" value="{{ qty }}" placeholder="Qty" required style="width: 100%; padding: 0.5rem;">
+                </td>
+                <td>
+                    <button type="submit" name="action" value="delete_row_{{ loop.index0 }}" class="btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Delete</button>
+                </td>
+            </tr>
             {% endfor %}
-        </select>
-        <input type="number" name="quantity[]" placeholder="Qty" min="1" value="{{ current_qty }}">
-        <!-- Delete Row Button (Only shown if more than 1 row exists) -->
-         {% if row_count > 1 %}
-         <button type="submit" name="action" value="delete_row_{{ i }}" class="btn-danger" style="padding: 0.4rem 0.8rem;" title="Remove Row">✕</button>
-         {% endif %}
-    </div>
-    {% endfor %}
+        </tbody>
+    </table>
 
-    <!-- Button to submit and request a new row -->
-    <div class="form-row">
-        <button type="submit" name="action" value="add_row" class="btn-secondary">+ Add New Item</button>
+    <!-- Controls -->
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <button type="submit" name="action" value="add_row" class="btn-secondary">+ Add Item</button>
+        <button type="submit" name="action" value="calculate" class="btn-primary">Calculate</button>
     </div>
 </form>
 
-<!-- Render pricing summary card only after form calculation -->
+<!-- Calculated Results Summary -->
 {% if results %}
-<div class="pricing-summary" style="margin-top: 2rem;">
-    <div class="metric">
-        <label>Raw Wholesale</label>
-        <span>${{ "%.2f"|format(results.raw_cost) }}</span>
+<hr style="margin: 2rem 0;">
+<h3>Pricing Breakdown</h3>
+<div class="pricing-summary" style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem;">
+    <div class="metric" style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0; flex: 1; min-width: 160px;">
+        <label style="display: block; font-size: 0.85rem; color: #64748b;">Raw Wholesale Cost</label>
+        <strong style="font-size: 1.25rem;">${{ "%.2f"|format(results.raw_cost) }}</strong>
     </div>
-    <div class="metric">
-        <label>Marked-Up Materials</label>
-        <span>${{ "%.2f"|format(results.marked_up_cost) }}</span>
+    <div class="metric" style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0; flex: 1; min-width: 160px;">
+        <label style="display: block; font-size: 0.85rem; color: #64748b;">Marked-Up Materials</label>
+        <strong style="font-size: 1.25rem;">${{ "%.2f"|format(results.marked_up_cost) }}</strong>
     </div>
-    <div class="metric">
-        <label>Design Fee</label>
-        <span>${{ "%.2f"|format(results.design_fee) }}</span>
+    <div class="metric" style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0; flex: 1; min-width: 160px;">
+        <label style="display: block; font-size: 0.85rem; color: #64748b;">Design Fee</label>
+        <strong style="font-size: 1.25rem;">${{ "%.2f"|format(results.design_fee) }}</strong>
     </div>
-    <div class="metric highlight">
-        <label>Estimated SRP</label>
-        <span>${{ "%.2f"|format(results.srp) }}</span>
-    </div>
-    <div class="metric">
-        <label>Margin</label>
-        <span>{{ "%.1f"|format(results.margin) }}%</span>
+    <div class="metric highlight" style="background: #e0f2fe; padding: 1rem; border-radius: 6px; border: 1px solid #7dd3fc; flex: 1; min-width: 180px;">
+        <label style="display: block; font-size: 0.85rem; color: #0369a1;">Suggested Retail Price (SRP)</label>
+        <strong style="font-size: 1.4rem; color: #0c4a6e;">${{ "%.2f"|format(results.srp) }}</strong>
+        <span style="display: block; font-size: 0.8rem; color: #0369a1; margin-top: 0.25rem;">Profit Margin: {{ "%.1f"|format(results.margin) }}%</span>
     </div>
 </div>
-
 {% endif %}
 {% endblock %}

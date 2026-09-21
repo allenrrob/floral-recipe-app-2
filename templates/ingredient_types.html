@@ -4,18 +4,22 @@
 {% block content %}
 <h2>Ingredient Type & Markup Manager</h2>
 
+<!-- Form: Add a new type -->
 <form method="POST" class="form-inline">
+    <input type="hidden" name="action" value="create_type">
     <input type="text" name="name" placeholder="Type Name (e.g. Standard Flower)" required>
     <input type="number" step="0.1" name="markup" placeholder="Markup Multiplier (e.g. 3.5)" required>
     <button type="submit">Add Type</button>
 </form>
 
+<!-- All Types Data Table -->
 <table class="data-table">
     <thead>
         <tr>
             <th>ID</th>
             <th>Type Name</th>
             <th>Default Markup</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -24,10 +28,39 @@
             <td>{{ type.id }}</td>
             <td><strong>{{ type.name }}</strong></td>
             <td>{{ type.markup }}</td>
+            <td>
+                <button type="button" class="btn-secondary" onclick="toggleEditRow({{ type.id }})">Edit</button>
+            </td>
         </tr>
+
+        <!-- Hidden Inline Edit Drawer Row -->
+        <tr id="edit-row-{{ type.id }}" style="display:none; background-color: #f8fafc;;">
+            <td colspan="4">
+                <form method="POST" class="form-inline">
+                    <input type="hidden" name="action" value="edit_type">
+                    <input type="hidden" name="type_id" value="{{ type.id }}">
+                    <input type="text" name="name" value="{{ type.name }}" required placeholder="Type Name">
+                    <input type="number" step="0.1" name="markup" value="{{ type.markup }}" required placeholder="Markup Multiplier">
+                    <button type="submit">Save</button>
+                    <button type="button" class="btn-secondary" onclick="toggleEditRow({{ type.id }})">Cancel</button>
+                </form>
+            </td>
+         </tr>
         {% else %}
-        <tr><td colspan="3">No ingredient types found.</td></tr>
+        <tr><td colspan="4">No ingredient types found.</td></tr>
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Toggle Script -->
+<script>
+    function toggleEditRow(typeId) {
+        var row = document.getElementById('edit-row-' + typeId);
+        if (row.style.display === 'none' || row.style.display === '') {
+        row.style.display = 'table-row';
+        } else {
+        row.style.display = 'none';
+        }
+    }
+</script>
 {% endblock %}

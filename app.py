@@ -345,17 +345,17 @@ def ingredient_types():
             markup = request.form.get('markup')
 
             if type_id and name and markup:
-                type = models.IngredientType.query.get(int(type_id))
-                if type:
-                    type.name = name.strip()
-                    type.markup = float(markup)
+                ing_type = models.IngredientType.query.get(int(type_id))
+                if ing_type:
+                    ing_type.name = name.strip()
+                    ing_type.markup = float(markup)
 
                     db.session.commit()
 
             return redirect('/ingredient-types')
         
-        all_types = models.IngredientType.query.order_by(models.IngredientType.name.asc()).all()
-        return render_template('ingredient_types.html', types=all_types)
+    all_types = models.IngredientType.query.order_by(models.IngredientType.name.asc()).all()
+    return render_template('ingredient_types.html', types=all_types)
 
 # --- Vendor Manager ---
 @app.route('/vendors', methods=['GET', 'POST'])

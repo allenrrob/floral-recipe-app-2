@@ -5,6 +5,7 @@ from extensions import db
 from sqlalchemy import or_
 from routes.ingredients import ingredients_bp
 from routes.vendors import vendors_bp
+from routes.ingredient_types import ingredient_types_bp
 
 # Floral Recipe App 
 app = Flask(__name__)
@@ -19,6 +20,7 @@ Scss(app, static_dir='static', asset_dir='static/scss')
 
 app.register_blueprint(ingredients_bp)
 app.register_blueprint(vendors_bp)
+app.register_blueprint(ingredient_types_bp)
 
 # Import models so SQLAlchemy is aware of them
 import models 
@@ -251,42 +253,6 @@ def design_fees():
 
     all_fees = models.DesignType.query.all()
     return render_template('design_fees.html', fees=all_fees)
-
-
-# --- Ingredient Type Manager ---
-@app.route('/ingredient-types', methods=['GET', 'POST'])
-def ingredient_types():
-    if request.method == 'POST':
-        action = request.form.get('action')
-
-        # Action: Create an new ingredient type
-        if action == 'create_type':
-            name = request.form.get('name')
-            markup = request.form.get('markup')
-            if name and markup:
-                new_type = models.IngredientType(name=name, markup=float(markup))
-                db.session.add(new_type)
-                db.session.commit()
-                return redirect('/ingredient-types')
-
-        # Action: Edit existing ingredient type
-        elif action == 'edit_type':
-            type_id = request.form.get('type_id')
-            name = request.form.get('name')
-            markup = request.form.get('markup')
-
-            if type_id and name and markup:
-                ing_type = models.IngredientType.query.get(int(type_id))
-                if ing_type:
-                    ing_type.name = name.strip()
-                    ing_type.markup = float(markup)
-
-                    db.session.commit()
-
-            return redirect('/ingredient-types')
-        
-    all_types = models.IngredientType.query.order_by(models.IngredientType.name.asc()).all()
-    return render_template('ingredient_types.html', types=all_types)
 
 # --- Profit Margin Dashboard ---
 @app.route('/profit-margins')

@@ -24,11 +24,11 @@
 <hr>
 <!-- Search Bar -->
 <div class="search-container">
-    <form method="GET" action="{{ url_for('products') }}" class="form-inline">
+    <form method="GET" action="{{ url_for('products.products') }}" class="form-inline">
         <input type="text" name="q" placeholder="Search product name or code..." value="{{ search_query }}">
         <button type="submit">Search</button>
         {% if search_query %}
-        <a href="{{ url_for('products') }}" class="btn-secondary">Clear Search</a>
+        <a href="{{ url_for('products.products') }}" class="btn-secondary">Clear Search</a>
         {% endif %}
     </form>
 </div>
@@ -47,7 +47,7 @@
             <div class="product-header">
                 <h3>{{ product.name }} <span class="badge">{{ product.product_code }}</span></h3>
                 <span class="design-style">Design Style: {{ product.design_style.name if product.design_style else 'N/A' }}</span>
-                <button type="button" class="btn-secondary style="padding: 0.3rem 0.6rem; font-size: 0.85rem; onclick="toggleEditForm({{ product.id }})">Edit</button>
+                <button type="button" class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.85rem; onclick="toggleEditForm({{ product.id }})">Edit</button>
             </div>
 
             <!-- Pricing Summary Cards -->
@@ -81,7 +81,7 @@
             </div>
             <!-- Inline Edit Drawer (Hidden by Default) -->
             <div id="edit-form-{{ product.id }}" class="edit-product-container" style="display: none; margin-bottom: 1.5rem; background: #f1f5f9; padding: 1rem; border-radius: 6px;">
-                <form method="POST" action="{{ url_for('products', page=pagination.page, q=search_query) }}" class="form-stacked">
+                <form method="POST" action="{{ url_for('products.products', page=pagination.page, q=search_query) }}" class="form-stacked">
                     <input type="hidden" name="action" value="edit_product">
                     <input type="hidden" name="product_id" value="{{ product.id }}">
                     
@@ -106,7 +106,7 @@
     </div>
 
     <!-- Form: Add Stems to Recipe -->
-    <form method="POST" action="{{ url_for('products', page=pagination.page, q=search_query) }}" class="form-inline recipe-add-form">
+    <form method="POST" action="{{ url_for('products.products', page=pagination.page, q=search_query) }}" class="form-inline recipe-add-form">
         <input type="hidden" name="action" value="add_ingredient">
         <input type="hidden" name="product_id" value="{{ product.id }}">
 
@@ -144,7 +144,7 @@
                 <td>${{ "%.2f"|format(item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) }}</td>
                 <td>${{ "%.2f"|format((item.ingredient.cost_per_pkg / item.ingredient.qty_per_pkg) * item.quantity) }}</td>
                 <td>
-                    <form method="POST" action="{{ url_for('products', page=pagination.page, q=search_query) }}" style="display:inline;">
+                    <form method="POST" action="{{ url_for('products.products', page=pagination.page, q=search_query) }}" style="display:inline;">
                         <input type="hidden" name="action" value="delete_recipe_item">
                         <input type="hidden" name="recipe_item_id" value="{{ item.id }}">
                         <button type="submit" class="btn-danger">Remove</button>
@@ -160,7 +160,7 @@
 {% else %}
 <p>
     {% if search_query %}
-    No products found matching "{{ search_query }}". <a href="{{ url_for('products') }}">Clear search</a>
+    No products found matching "{{ search_query }}". <a href="{{ url_for('products.products') }}">Clear search</a>
     {% else %}
     No products created yet. Add your first arrangement above!
     {% endif %}
@@ -171,13 +171,13 @@
 {% if pagination.pages > 1 %}
 <div class="pagination">
     {% if pagination.has_prev %}
-    <a href="{{ url_for('products', page=pagination.prev_num, q=search_query) }}" class="btn-secondary">&laquo; Previous</a>
+    <a href="{{ url_for('products.products', page=pagination.prev_num, q=search_query) }}" class="btn-secondary">&laquo; Previous</a>
     {% endif %}
 
     <span>Page {{ pagination.page }} of {{ pagination.pages }} ({{ pagination.total }} total products)</span>
 
     {% if pagination.has_next %}
-    <a href="{{ url_for('products', page=pagination.next_num, q=search_query) }}" class="btn-secondary">Next &raquo;</a>
+    <a href="{{ url_for('products.products', page=pagination.next_num, q=search_query) }}" class="btn-secondary">Next &raquo;</a>
     {% endif %}
 </div>
 {% endif %}

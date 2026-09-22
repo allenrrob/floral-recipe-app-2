@@ -7,6 +7,7 @@ from routes.ingredients import ingredients_bp
 from routes.vendors import vendors_bp
 from routes.ingredient_types import ingredient_types_bp
 from routes.design_fees import design_fees_bp
+from routes.products import products_bp
 
 # Floral Recipe App 
 app = Flask(__name__)
@@ -23,6 +24,7 @@ app.register_blueprint(ingredients_bp)
 app.register_blueprint(vendors_bp)
 app.register_blueprint(ingredient_types_bp)
 app.register_blueprint(design_fees_bp)
+app.register_blueprint(products_bp)
 
 # Import models so SQLAlchemy is aware of them
 import models 

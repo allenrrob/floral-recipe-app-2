@@ -6,6 +6,7 @@ from sqlalchemy import or_
 from routes.ingredients import ingredients_bp
 from routes.vendors import vendors_bp
 from routes.ingredient_types import ingredient_types_bp
+from routes.design_fees import design_fees_bp
 
 # Floral Recipe App 
 app = Flask(__name__)
@@ -21,6 +22,7 @@ Scss(app, static_dir='static', asset_dir='static/scss')
 app.register_blueprint(ingredients_bp)
 app.register_blueprint(vendors_bp)
 app.register_blueprint(ingredient_types_bp)
+app.register_blueprint(design_fees_bp)
 
 # Import models so SQLAlchemy is aware of them
 import models 
@@ -239,20 +241,6 @@ def temp_calculator():
         submitted_rows=submitted_rows,
         selected_design_id=selected_design_id
     )
-# --- Design Fee Manager ---
-@app.route('/design-fees', methods=['GET', 'POST'])
-def design_fees():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        fee_pct = request.form.get('design_fee_percentage')
-        if name and fee_pct:
-            new_fee = models.DesignType(name=name, design_fee_percentage=float(fee_pct))
-            db.session.add(new_fee)
-            db.session.commit()
-            return redirect('/design-fees')
-
-    all_fees = models.DesignType.query.all()
-    return render_template('design_fees.html', fees=all_fees)
 
 # --- Profit Margin Dashboard ---
 @app.route('/profit-margins')

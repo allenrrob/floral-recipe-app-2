@@ -2,20 +2,24 @@
 {% block title %}Design Fees - Floral Recipe App{% endblock %}
 
 {% block content %}
-<h2>Design Fee & Labor Percentage Manager</h2>
+<h2>Design Type & Labor Fee Manager</h2>
 
-<form method="POST" class="form-inline">
-    <input type="text" name="name" placeholder="Style (e.g. Wedding Floral)" required>
-    <input type="number" step="0.1" name="design_fee_percentage" placeholder="Labor Fee % (e.g. 20.0)" required>
-    <button type="submit">Add Fee Category</button>
+<!-- Form: Add a new design fee -->
+<form method="POST" action="{{ url_for('design_fees.design_fees') }}" class="form-inline">
+    <input type="hidden" name="action" value="create_design_type">
+    <input type="text" name="name" placeholder="Style Name (e.g. Premium Wedding)" required>
+    <input type="number" step="0.1" name="design_fee_percentage" placeholder="Fee % (e.g. 20.0)" required>
+    <button type="submit">Add Style</button>
 </form>
 
+<!-- All Design Types Table -->
 <table class="data-table">
     <thead>
         <tr>
             <th>ID</th>
-            <th>Design Classification</th>
-            <th>Labor/Design Fee</th>
+            <th>Style Name</th>
+            <th>Labor Fee Percentage</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -23,11 +27,40 @@
         <tr>
             <td>{{ fee.id }}</td>
             <td><strong>{{ fee.name }}</strong></td>
-            <td>{{ fee.design_fee_percentage }}</td>
+            <td>{{ fee.design_fee_percentage }}%</td>
+            <td>
+                <button type="button" class="btn-secondary" onclick="toggleEditRow({{ fee.id }})">Edit</button>
+            </td>
+        </tr>
+
+        <!-- Hidden Inline Edit Drawer Row -->
+        <tr id="edit-row-{{ fee.id }}" style="display:none; background-color: #f8fafc;">
+            <td colspan="4">
+                <form method="POST" action="{{ url_for('design_fees.design_fees') }}" class="form-inline" style="margin: 0.5rem 0;">
+                    <input type="hidden" name="action" value="edit_design_type">
+                    <input type="hidden" name="design_type_id" value="{{ fee.id }}">
+                    <input type="text" name="name" value="{{ fee.name }}" required placeholder="Style Name">
+                    <input type="number" step="0.1" name="design_fee_percentage" value="{{ fee.design_fee_percentage }}" required placeholder="Fee %">
+                    <button type="submit">Save</button>
+                    <button type="button" class="btn-secondary" onclick="toggleEditRow({{ fee.id }})">Cancel</button>
+                </form>
+            </td>
         </tr>
         {% else %}
-        <tr><td colspan="3">No design fees found.</td></tr>
+        <tr><td colspan="4">No design fee styles found. Add one above!</td></tr>
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Toggle Script -->
+<script>
+    function toggleEditRow(feeId) {
+        var row = document.getElementById('edit-row-' + feeId);
+        if (row.style.display === 'none' || row.style.display === '') {
+            row.style.display = 'table-row';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+</script>
 {% endblock %}

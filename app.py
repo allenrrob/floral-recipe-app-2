@@ -153,8 +153,8 @@ def products():
     )
 
 # --- Quick Calculator ---
-@app.route('/temp-calculator', methods=['GET', 'POST'])
-def temp_calculator():
+@app.route('/quick-calculator', methods=['GET', 'POST'])
+def quick_calculator():
     # Fetch available options for the dropdowns
     all_ingredients = models.Ingredient.query.order_by(models.Ingredient.name.asc()).all()
     all_design_types = models.DesignType.query.order_by(models.DesignType.name.asc()).all()
@@ -235,7 +235,7 @@ def temp_calculator():
             }
 
     return render_template(
-        'temp_calculator.html',
+        'quick_calculator.html',
         ingredients=all_ingredients,
         design_types=all_design_types,
         results=calculated_results,

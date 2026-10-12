@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from extensions import db
+from flask import Blueprint, render_template, request
+
 import models
 
 quick_calculator_bp = Blueprint('quick_calculator', __name__)
 
 # --- Quick Calculator ---
-@app.route('/quick-calculator', methods=['GET', 'POST'])
+@quick_calculator_bp.route('/quick-calculator', methods=['GET', 'POST'])
 def quick_calculator():
     # Fetch available options for the dropdowns
     all_ingredients = models.Ingredient.query.order_by(models.Ingredient.name.asc()).all()

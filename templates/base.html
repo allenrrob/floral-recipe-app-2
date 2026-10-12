@@ -10,17 +10,17 @@
 <body>
     <header class="navbar">
         <div class="logo">
-            <a href="{{ url_for('index') }}">Floral Recipe App</a>
+            <a href="{{ url_for('pages.index') }}">Floral Recipe App</a>
         </div>
         <nav class="nav-links">
-            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('pages.index') }}">Home</a>
             <a href="{{ url_for('ingredients.ingredients') }}">Ingredients</a>
             <a href="{{ url_for('products.products') }}">Products</a>
-            <a href="{{ url_for('quick_calculator') }}">Quick Calculator</a>
+            <a href="{{ url_for('quick_calculator.quick_calculator') }}">Quick Calculator</a>
             <a href="{{ url_for('design_fees.design_fees') }}">Design Fees</a>
             <a href="{{ url_for('ingredient_types.ingredient_types') }}">Ingredient Types</a>
             <a href="{{ url_for('vendors.vendors') }}">Vendors</a>
-            <a href="{{ url_for('profit_margins') }}">Margins</a>
+            <a href="{{ url_for('pages.profit_margins') }}">Margins</a>
         </nav>    
     </header>
 

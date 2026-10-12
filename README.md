@@ -10,7 +10,7 @@ A Flask-based web application designed for floral designers and shop owners to t
 * **Database & ORM**: SQLite (`app.db`), Flask-SQLAlchemy
 * **Styling**: SCSS compiled directly to standard CSS via `Flask-Scss`
 * **Templating Engine**: Jinja2 (Layout Inheritance & Scaffolding)
-* **Architecture**: Decoupled `extensions.py` pattern (`db = SQLAlchemy()`) to prevent circular imports
+* **Architecture**: Modular Flask blueprints in `routes/` with a shared `extensions.py` (`db = SQLAlchemy()`) to avoid circular imports
 
 ---
 
@@ -54,14 +54,23 @@ The application relies on six core relational models connected through foreign k
 ---------------------------------------------------------------------------
 
 🧮 Pricing Engine & FormulasAll cost calculations and suggested retail pricing models run dynamically on the Product model via Python @property decorators:Unit / Stem Wholesale Cost:$$\text{Unit Cost} = \frac{\text{cost\_per\_pkg}}{\text{qty\_per\_pkg}}$$Raw Wholesale Cost (Materials Cost):$$\text{Raw Wholesale Cost} = \sum \left( \text{Unit Cost} \times \text{Quantity Used} \right)$$Marked-Up Material Cost:$$\text{Marked-Up Cost} = \sum \left( \text{Unit Cost} \times \text{Quantity Used} \times \text{IngredientType.markup} \right)$$Design / Labor Fee:$$\text{Design Fee} = \text{Marked-Up Cost} \times \left( \frac{\text{DesignType.design\_fee\_percentage}}{100} \right)$$Suggested Retail Price (SRP):$$\text{Suggested Retail Price} = \text{Marked-Up Cost} + \text{Design Fee}$$Gross Profit Margin %:$$\text{Profit Margin \%} = \left( \frac{\text{Suggested Retail Price} - \text{Raw Wholesale Cost}}{\text{Suggested Retail Price}} \right) \times 100$$📁 Project Directory StructurePlaintextfloral-recipe-app/
-├── app.py                  # Main Flask application initialization & routes
-├── extensions.py           # Shared database instance (db = SQLAlchemy())
+├── app.py                   # Flask application and blueprint registration
+├── extensions.py            # Shared database instance (db = SQLAlchemy())
 ├── models.py                # Database schemas, relationships, & pricing properties
+├── routes/                  # Modular page and CRUD blueprints
+│   ├── __init__.py          # Central blueprint exports
+│   ├── pages.py             # Dashboard and margin analytics
+│   ├── products.py          # Product and recipe management
+│   ├── ingredients.py       # Ingredient inventory management
+│   ├── vendors.py           # Vendor management
+│   ├── ingredient_types.py  # Ingredient category management
+│   ├── design_fees.py       # Design fee management
+│   └── quick_calculator.py  # Temporary recipe cost calculator
 ├── seed.py                  # Database seed script for initial lookup data
 ├── static/
-│   ├── css/                # Auto-compiled main.css output
+│   ├── css/                 # Auto-compiled main.css output
 │   └── scss/
-│       └── main.scss       # SCSS stylesheets and component rules
+│       └── main.scss        # SCSS stylesheets and component rules
 └── templates/
     ├── base.html           # Primary layout skeleton & top navigation
     ├── index.html          # Dashboard homepage

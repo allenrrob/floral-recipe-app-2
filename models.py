@@ -57,7 +57,7 @@ class ProductIngredient(db.Model):
     __tablename__ = 'product_ingredients'
 
     id = db.Column(db.Integer, primary_key=True)
-    quantity = db.Column(db.Integer, nullable=False, default=1)
+    quantity = db.Column(db.Float, nullable=False, default=1.0)
 
     # Foreign Keys
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
@@ -83,6 +83,18 @@ class Product(db.Model):
 
     # Relationship to join table
     recipe_items = db.relationship('ProductIngredient', backref='product', cascade="all, delete-orphan", lazy=True)
+
+    @property
+    def sorted_recipe_items(self):
+        return sorted(
+            self.recipe_items,
+            key=lambda item: (
+                item.ingredient.type_info.name.casefold()
+                if item.ingredient.type_info
+                else "",
+                item.ingredient.name.casefold(),
+            ),
+        )
 
     def __repr__(self):
         return f'<Product {self.name}>'

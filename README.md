@@ -1,108 +1,58 @@
-Markdown# 🌸 Floral Recipe & Costing Web App
+# 🌸 Floral Recipe & Cost Management App
 
-A Flask-based web application designed for floral designers and shop owners to track inventory stem costs, manage arrangement recipe formulas, apply category-specific markups and labor fees, and dynamically calculate wholesale costs and suggested retail pricing.
-
----
-
-## 🛠️ Tech Stack & Extensions
-
-* **Backend**: Python 3.12+, Flask
-* **Database & ORM**: SQLite (`app.db`), Flask-SQLAlchemy
-* **Styling**: SCSS compiled directly to standard CSS via `Flask-Scss`
-* **Templating Engine**: Jinja2 (Layout Inheritance & Scaffolding)
-* **Architecture**: Modular Flask blueprints in `routes/` with a shared `extensions.py` (`db = SQLAlchemy()`) to avoid circular imports
+A Flask-based web application designed for retail florists to manage stem inventory, construct arrangement recipes, automatically calculate wholesale costs, apply category markups and labor fees, and generate suggested retail prices (SRP).
 
 ---
 
-## 📐 Data Architecture & Schema
+## 🛠️ Tech Stack
 
-The application relies on six core relational models connected through foreign key constraints and join tables:
+* **Backend:** Python 3.12, Flask, Flask-SQLAlchemy (SQLite)
+* **Frontend:** Jinja2 Templates, Vanilla JavaScript, Tom-Select (Searchable Dropdowns)
+* **Styling:** SCSS compiled to CSS via Dart Sass / `flask-scss`
+
+---
+
+## 🗄️ Database Architecture
+
+The application uses six core relational models to track inventory, pricing, and arrangement composition:
+
+1. **`Vendor`**: Supplier information (`id`, `name`).
+2. **`IngredientType`**: Category markups (`id`, `name`, `markup` multiplier float, e.g., `3.5`).
+3. **`DesignType`**: Labor/design style fees (`id`, `name`, `design_fee_percentage` float, e.g., `20.0`).
+4. **`Ingredient`**: Stems and supplies (`id`, `name`, `cost_per_pkg`, `qty_per_pkg`, `ingredient_type_id`, `vendor_id`).
+   * *Calculated:* Unit Cost = `cost_per_pkg / qty_per_pkg`
+5. **`Product`**: Arrangement bases (`id`, `name`, `product_code`, `actual_price`, `image_url`, `design_type_id`).
+   * *Calculated Metrics:* Raw Wholesale Cost, Marked-Up Cost, Design Fee, Suggested Retail Price (SRP), Profit Margin %.
+6. **`ProductIngredient`**: Recipe join table (`id`, `product_id`, `ingredient_id`, `quantity` float).
+
+---
+
+## 🏗️ Project Structure
 
 ```text
-+------------------+         +------------------+         +-------------------+
-|      Vendor      |         |  IngredientType  |         |    DesignType     |
-+------------------+         +------------------+         +-------------------+
-| id (PK)          |         | id (PK)          |         | id (PK)           |
-| name             |         | name             |         | name              |
-+--------+---------+         | markup           |         | design_fee_pct    |
-         |                   +--------+---------+         +---------+---------+
-         | 1                          | 1                           | 1
-         |                            |                             |
-         | N                          | N                           | N
-+--------+----------------------------+---------+         +---------+---------+
-|                    Ingredient                 |         |      Product      |
-+-----------------------------------------------+         +-------------------+
-| id (PK)                                       |         | id (PK)           |
-| name                                          |         | name              |
-| cost_per_pkg                                  |         | product_code      |
-| qty_per_pkg                                   |         | actual_price      |
-| vendor_id (FK, optional)                      |         | design_type_id(FK)|
-| ingredient_type_id (FK)                       |         +---------+---------+
-+-----------------------+-----------------------+                   | 1
-                        | 1                                         |
-                        |                                           | N
-                        | N                                         |
-               +--------+-------------------------------------------+
-               |               ProductIngredient (Join Table)       |
-               +----------------------------------------------------+
-               | id (PK)                                            |
-               | quantity (stems used in recipe)                    |
-               | product_id (FK)                                    |
-               | ingredient_id (FK)                                 |
-               +----------------------------------------------------+
-               
----------------------------------------------------------------------------
-
-🧮 Pricing Engine & FormulasAll cost calculations and suggested retail pricing models run dynamically on the Product model via Python @property decorators:Unit / Stem Wholesale Cost:$$\text{Unit Cost} = \frac{\text{cost\_per\_pkg}}{\text{qty\_per\_pkg}}$$Raw Wholesale Cost (Materials Cost):$$\text{Raw Wholesale Cost} = \sum \left( \text{Unit Cost} \times \text{Quantity Used} \right)$$Marked-Up Material Cost:$$\text{Marked-Up Cost} = \sum \left( \text{Unit Cost} \times \text{Quantity Used} \times \text{IngredientType.markup} \right)$$Design / Labor Fee:$$\text{Design Fee} = \text{Marked-Up Cost} \times \left( \frac{\text{DesignType.design\_fee\_percentage}}{100} \right)$$Suggested Retail Price (SRP):$$\text{Suggested Retail Price} = \text{Marked-Up Cost} + \text{Design Fee}$$Gross Profit Margin %:$$\text{Profit Margin \%} = \left( \frac{\text{Suggested Retail Price} - \text{Raw Wholesale Cost}}{\text{Suggested Retail Price}} \right) \times 100$$📁 Project Directory StructurePlaintextfloral-recipe-app/
-├── app.py                   # Flask application and blueprint registration
-├── extensions.py            # Shared database instance (db = SQLAlchemy())
-├── models.py                # Database schemas, relationships, & pricing properties
-├── routes/                  # Modular page and CRUD blueprints
-│   ├── __init__.py          # Central blueprint exports
-│   ├── pages.py             # Dashboard and margin analytics
-│   ├── products.py          # Product and recipe management
-│   ├── ingredients.py       # Ingredient inventory management
-│   ├── vendors.py           # Vendor management
-│   ├── ingredient_types.py  # Ingredient category management
-│   ├── design_fees.py       # Design fee management
-│   └── quick_calculator.py  # Temporary recipe cost calculator
-├── seed.py                  # Database seed script for initial lookup data
+floral-recipe-app/
+├── app.py                 # Application factory & Blueprint registration
+├── extensions.py          # Isolated SQLAlchemy database instance (db)
+├── models.py              # Database models & pricing calculation logic
 ├── static/
-│   ├── css/                 # Auto-compiled main.css output
+│   ├── css/
+│   │   └── main.css       # Compiled CSS
 │   └── scss/
-│       └── main.scss        # SCSS stylesheets and component rules
-└── templates/
-    ├── base.html           # Primary layout skeleton & top navigation
-    ├── index.html          # Dashboard homepage
-    ├── vendors.html        # Vendor manager
-    ├── ingredient_types.html # Stem categories & markup manager
-    ├── design_fees.html     # Design labor fee manager
-    ├── ingredients.html     # Inventory stem cost & package manager
-    ├── products.html        # Product arrangement & recipe builder
-    ├── temp_calculator.html # Quick scratchpad pricing calculator
-    └── profit_margins.html  # Profit margin analytics dashboard
----------------------------------------------------------------------------    
-🚦 Core Feature Status
-[x] Step 1: Database Schema & Setup (models.py, app.py, extensions.py)
-
-[x] Step 2: Database Seeding (seed.py)
-
-[x] Step 3: Base Navigation & Dashboard (base.html, index.html)
-
-[x] Step 4: Supporting CRUD Managers (vendors.html, ingredient_types.html, design_fees.html, SCSS)
-
-[x] Step 5: Ingredient Manager (ingredients.html & /ingredients route)
-
-[x] Step 6: Product & Recipe Builder (products.html & /products route)
-
-[x] Step 7: Quick Calculator & Analytics (temp_calculator.html & profit_margins.html) 
----------------------------------------------------------------------------
-📌 TODO / Future Enhancements
-[ ] Add ingredient photos (visible on hover over ingredient names)
-[ ] Add search/filter functionality for inventory ingredients
-[ ] Add search/filter functionality for products & recipes
-[ ] Add column sorting capability for the Profit Margin Analytics page
-[ ] Add view for designers that does not show costs
-[ ] Ability to delete products
-[ ] Delete ingredients
-[ ] Sort recipe by ingredient type. maybe highlight depending on ingredient
+│       └── main.scss      # Main SCSS styles
+├── templates/             # Jinja2 template views
+│   ├── base.html
+│   ├── index.html
+│   ├── products.html
+│   ├── ingredients.html
+│   ├── vendors.html
+│   ├── ingredient_types.html
+│   ├── design_fees.html
+│   └── temp_calculator.html
+└── routes/                # Modular Flask Blueprints
+    ├── __init__.py
+    ├── ingredients.py
+    ├── products.py
+    ├── vendors.py
+    ├── ingredient_types.py
+    ├── design_fees.py
+    └── calculator.py

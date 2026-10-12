@@ -3,20 +3,24 @@
 
 {% block content %}
 <h2>Vendor Management</h2>
-<!-- Form: Add a new vendor -->
-<form method="POST" class="form-inline">
-    <input type="hidden" name="action" value="create_vendor">
-    <input type="text" name="name" placeholder="Vendor Name (e.g. Mayesh Wholesale)" required>
-    <button type="submit">Add Vendor</button>
-</form>
+<details class="creation-drawer">
+    <summary class="btn-secondary">New Vendor +</summary>
+    <form method="POST" class="form-inline">
+        <input type="hidden" name="action" value="create_vendor">
+        <input type="text" name="name" placeholder="Vendor Name (e.g. Mayesh Wholesale)" required>
+        <button type="submit">Add Vendor</button>
+    </form>
+</details>
 
 <!-- All Vendors Data Table -->
+<div class="table-responsive">
 <table class="data-table">
     <thead>
         <tr>
             <th>ID</th>
             <th>Vendor Name</th>
             <th>Assigned Ingredients</th>
+            <th>Inventory Report</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -26,6 +30,7 @@
             <td>{{ vendor.id }}</td>
             <td><strong>{{ vendor.name }}</strong></td>
             <td>{{ vendor.ingredients|length }} items</td>
+            <td><a class="btn-secondary" href="{{ url_for('vendors.vendor_inventory', vendor_id=vendor.id) }}">Open Report</a></td>
             <td>
                 <button type="button" class="btn-secondary" onclick="toggleEditRow({{ vendor.id }})">Edit</button>
             </td>
@@ -33,7 +38,7 @@
 
         <!-- Hidden Inline Edit Drawer Row -->
         <tr id="edit-row-{{ vendor.id }}" style="display:none; background-color: #f8fafc;">
-            <td colspan="4">
+            <td colspan="5">
                 <form method="POST" class="form-inline">
                     <input type="hidden" name="action" value="edit_vendor">
                     <input type="hidden" name="vendor_id" value="{{ vendor.id }}">
@@ -44,10 +49,11 @@
             </td>
         </tr>
         {% else %}
-        <tr><td colspan="4">No vendors found. Add one above!</td></tr>
+        <tr><td colspan="5">No vendors found. Add one above!</td></tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 
 <!-- Toggle Script -->
 <script>

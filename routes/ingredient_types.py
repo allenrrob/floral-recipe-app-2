@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, url_for
 from extensions import db
 import models
 
@@ -18,7 +18,7 @@ def ingredient_types():
                 new_type = models.IngredientType(name=name, markup=float(markup))
                 db.session.add(new_type)
                 db.session.commit()
-                return redirect('/ingredient-types')
+                return redirect(url_for('ingredient_types.ingredient_types'))
 
         # Action: Edit existing ingredient type
         elif action == 'edit_type':
@@ -27,14 +27,14 @@ def ingredient_types():
             markup = request.form.get('markup')
 
             if type_id and name and markup:
-                ing_type = models.IngredientType.query.get(int(type_id))
+                ing_type = models.IngredientType.query.get(int(float(type_id)))
                 if ing_type:
                     ing_type.name = name.strip()
                     ing_type.markup = float(markup)
 
                     db.session.commit()
 
-            return redirect('/ingredient-types')
+            return redirect(url_for('ingredient_types.ingredient_types'))
         
     all_types = models.IngredientType.query.order_by(models.IngredientType.name.asc()).all()
     return render_template('ingredient_types.html', types=all_types)

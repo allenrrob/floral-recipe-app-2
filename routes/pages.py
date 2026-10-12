@@ -12,7 +12,7 @@ def index():
 
 @pages_bp.route("/profit-margins")
 def profit_margins():
-    products = models.Product.query.all()
+    products = models.Product.query.order_by(models.Product.name.asc()).all()
 
     total_wholesale = sum(product.raw_wholesale_cost for product in products)
     total_retail = sum(product.suggested_retail_price for product in products)

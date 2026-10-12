@@ -4,29 +4,31 @@
 {% block content %}
 <h2>Ingredient Inventory Manager</h2>
 
-<!-- Form: Add New Ingredient -->
-<form method="POST" class="form-stacked">
-    <input type="hidden" name="action" value="create_ingredient">
-    <div class="form-row">
-        <input type="text" name="name" placeholder="Item Name (e.g. Ecuadorian Rose)" required>
-        <input type="number" step="0.01" name="cost_per_pkg" placeholder="Package Cost ($)" required>
-        <input type="number" step="0.1" name="qty_per_pkg" placeholder="Qty per Package (e.g. 25)" required>
-        <select name="ingredient_type_id" required>
-            <option value="" disabled selected>Select Ingredient Type...</option>
-            {% for t in types %}
-            <option value="{{ t.id }}">{{ t.name }} ({{ t.markup }}x Markup)</option>
-            {% endfor %}
-        </select>
-        <select name="vendor_id">
-            <option value="">Select Vendor (Optional)...</option>
-            {% for v in vendors %}
-            <option value="{{ v.id }}">{{ v.name }}</option>
-            {% endfor %}
-        </select>
+<details class="creation-drawer">
+    <summary class="btn-secondary">New Ingredient +</summary>
+    <form method="POST" class="form-stacked">
+        <input type="hidden" name="action" value="create_ingredient">
+        <div class="form-row">
+            <input type="text" name="name" placeholder="Item Name (e.g. Ecuadorian Rose)" required>
+            <input type="number" step="0.01" name="cost_per_pkg" placeholder="Package Cost ($)" required>
+            <input type="number" step="0.1" name="qty_per_pkg" placeholder="Qty per Package (e.g. 25)" required>
+            <select name="ingredient_type_id" required>
+                <option value="" disabled selected>Select Ingredient Type...</option>
+                {% for t in types %}
+                <option value="{{ t.id }}">{{ t.name }} ({{ t.markup }}x Markup)</option>
+                {% endfor %}
+            </select>
+            <select name="vendor_id">
+                <option value="">Select Vendor (Optional)...</option>
+                {% for v in vendors %}
+                <option value="{{ v.id }}">{{ v.name }}</option>
+                {% endfor %}
+            </select>
 
-        <button type="submit">Add Ingredient</button>
-    </div>
-</form>
+            <button type="submit">Add Ingredient</button>
+        </div>
+    </form>
+</details>
 
 <!-- Search Bar -->
  <div class="search-container">
@@ -39,6 +41,7 @@
     </form>
  </div>
 <!-- All Ingredients Data Table -->
+<div class="table-responsive">
 <table class="data-table">
     <thead>
         <tr>
@@ -97,6 +100,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 
 <!-- Pagination Controls -->
 {% if pagination.pages > 1 %}

@@ -25,30 +25,32 @@
 </div>
 
 <!-- Product profitability table -->
-<table class="data-table">
+<div class="table-responsive">
+<table class="data-table sortable-table">
     <thead>
         <tr>
-            <th>Product Name</th>
-            <th>Code</th>
-            <th>Raw Cost</th>
-            <th>Design Fee</th>
-            <th>SRP</th>
-            <th>Margin %</th>
+            <th><button type="button" class="sort-button" data-sort-type="text">Product Name</button></th>
+            <th><button type="button" class="sort-button" data-sort-type="text">Code</button></th>
+            <th><button type="button" class="sort-button" data-sort-type="number">Raw Cost</button></th>
+            <th><button type="button" class="sort-button" data-sort-type="number">Design Fee</button></th>
+            <th><button type="button" class="sort-button" data-sort-type="number">SRP</button></th>
+            <th><button type="button" class="sort-button" data-sort-type="number">Margin %</button></th>
         </tr>
     </thead>
     <tbody>
         {% for p in products %}
         <tr>
-            <td><strong>{{ p.name }}</strong></td>
-            <td>{{ p.product_code }}</td>
-            <td>${{ "%.2f"|format(p.raw_wholesale_cost) }}</td>
-            <td>${{ "%.2f"|format(p.design_fee) }}</td>
-            <td><strong>${{ "%.2f"|format(p.suggested_retail_price) }}</strong></td>
-            <td>{{ "%.1f"|format(p.profit_margin_percentage) }}%</td>
+            <td data-sort-value="{{ p.name }}"><strong>{{ p.name }}</strong></td>
+            <td data-sort-value="{{ p.product_code }}">{{ p.product_code }}</td>
+            <td data-sort-value="{{ p.raw_wholesale_cost }}">${{ "%.2f"|format(p.raw_wholesale_cost) }}</td>
+            <td data-sort-value="{{ p.design_fee }}">${{ "%.2f"|format(p.design_fee) }}</td>
+            <td data-sort-value="{{ p.suggested_retail_price }}"><strong>${{ "%.2f"|format(p.suggested_retail_price) }}</strong></td>
+            <td data-sort-value="{{ p.profit_margin_percentage }}">{{ "%.1f"|format(p.profit_margin_percentage) }}%</td>
         </tr>
         {% else %}
         <tr><td colspan="6">No products available for analytics.</td></tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% endblock %}

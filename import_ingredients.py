@@ -9,8 +9,14 @@ def import_ingredients_from_excel(file_path):
 
     with app.app_context():
         # Pre-fetch all types and vendors into lookup dictionaries for fast ID matching
-        types_lookup = {t.name.strip().lower(): t.id for t in models.IngredientType.query.all()}
-        vendors_lookup = {v.name.strip().lower(): v.id for v in models.Vendor.query.all()}
+        types_lookup = {
+            t.name.strip().lower(): t.id
+            for t in models.IngredientType.query.order_by(models.IngredientType.name.asc()).all()
+        }
+        vendors_lookup = {
+            v.name.strip().lower(): v.id
+            for v in models.Vendor.query.order_by(models.Vendor.name.asc()).all()
+        }
 
         imported_count = 0
         skipped_count = 0

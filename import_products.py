@@ -9,7 +9,10 @@ def import_products_from_excel(file_path):
 
     with app.app_context():
         # Pre-fetch all design types into a lookup dictionary for fast ID matching
-        design_types_lookup = {d.name.strip().lower(): d.id for d in models.DesignType.query.all()}
+        design_types_lookup = {
+            d.name.strip().lower(): d.id
+            for d in models.DesignType.query.order_by(models.DesignType.name.asc()).all()
+        }
         
         # Fallback design type if none is provided or matched (uses the first available DesignType)
         default_design_type = models.DesignType.query.first()

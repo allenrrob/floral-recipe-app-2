@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}{{ vendor.name }} Inventory Report - Floral Recipe App{% endblock %}
+
+{% block content %}
+<div class="report-header">
+    <div>
+        <h2>{{ vendor.name }} Inventory Report</h2>
+        <p>Physical inventory count sheet &mdash; {{ ingredients|length }} items</p>
+    </div>
+    <button type="button" class="btn-secondary no-print" onclick="window.print()">Print Report</button>
+</div>
+
+<div class="table-responsive">
+    <table class="data-table inventory-report">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Item</th>
+                <th>Package Qty</th>
+                <th>Package Cost</th>
+                <th>Count</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ingredient in ingredients %}
+            <tr>
+                <td>{{ ingredient.type_info.name if ingredient.type_info else 'N/A' }}</td>
+                <td><strong>{{ ingredient.name }}</strong></td>
+                <td>{{ ingredient.qty_per_pkg }}</td>
+                <td>${{ "%.2f"|format(ingredient.cost_per_pkg) }}</td>
+                <td class="inventory-write-in"></td>
+                <td class="inventory-notes"></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6">No ingredients are assigned to this vendor.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

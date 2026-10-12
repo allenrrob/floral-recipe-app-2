@@ -36,9 +36,41 @@
               create: false,
               placeholder: "Search stem or supply...",
               sortField: { field: "text", order: "asc" },
-              maxOptions: 100
+              maxOptions: 100,
+              dropdownParent: "body"
             });
           }
+        });
+
+        document.querySelectorAll(".sortable-table .sort-button").forEach(function(button) {
+          button.addEventListener("click", function() {
+            var table = button.closest("table");
+            var columnIndex = Array.from(button.closest("tr").children).indexOf(button.parentElement);
+            var direction = button.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending";
+            var rows = Array.from(table.tBodies[0].rows);
+            var multiplier = direction === "ascending" ? 1 : -1;
+            var type = button.dataset.sortType;
+
+            rows.sort(function(rowA, rowB) {
+              if (!rowA.cells[columnIndex] || !rowB.cells[columnIndex]) {
+                return 0;
+              }
+              var valueA = rowA.cells[columnIndex].dataset.sortValue || rowA.cells[columnIndex].textContent.trim();
+              var valueB = rowB.cells[columnIndex].dataset.sortValue || rowB.cells[columnIndex].textContent.trim();
+              var comparison = type === "number"
+                ? Number(valueA) - Number(valueB)
+                : valueA.localeCompare(valueB, undefined, { numeric: true, sensitivity: "base" });
+              return comparison * multiplier;
+            });
+
+            rows.forEach(function(row) {
+              table.tBodies[0].appendChild(row);
+            });
+            table.querySelectorAll("th[aria-sort]").forEach(function(header) {
+              header.removeAttribute("aria-sort");
+            });
+            button.parentElement.setAttribute("aria-sort", direction);
+          });
         });
       });
     </script>

@@ -26,8 +26,8 @@ def ingredients():
                     name=name,
                     cost_per_pkg=float(cost_per_pkg),
                     qty_per_pkg=float(qty_per_pkg),
-                    ingredient_type_id=int(type_id),
-                    vendor_id=int(vendor_id) if vendor_id else None
+                    ingredient_type_id=int(float(type_id)),
+                    vendor_id=int(float(vendor_id)) if vendor_id else None
                 )
 
                 db.session.add(new_ingredient)
@@ -44,13 +44,13 @@ def ingredients():
             vendor_id = request.form.get('vendor_id')
 
             if ing_id and name and cost_per_pkg and qty_per_pkg:
-                ingredient = models.Ingredient.query.get(int(ing_id))
+                ingredient = models.Ingredient.query.get(int(float(ing_id)))
                 if ingredient:
                     ingredient.name = name.strip()
                     ingredient.cost_per_pkg = float(cost_per_pkg)
                     ingredient.qty_per_pkg = float(qty_per_pkg)
-                    ingredient.ingredient_type_id = int(type_id) if type_id else None
-                    ingredient.vendor_id = int(vendor_id) if vendor_id else None
+                    ingredient.ingredient_type_id = int(float(type_id)) if type_id else None
+                    ingredient.vendor_id = int(float(vendor_id)) if vendor_id else None
 
                     db.session.commit()
 
@@ -63,7 +63,7 @@ def ingredients():
     if search_query:
         query=query.filter(models.Ingredient.name.ilike(f'%{search_query}%'))
 
-    pagination = query.order_by(models.Ingredient.id.desc()).paginate(
+    pagination = query.order_by(models.Ingredient.name.asc()).paginate(
         page=page,
         per_page=per_page,
         error_out=False

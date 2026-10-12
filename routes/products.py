@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+import math
+
+from flask import Blueprint, abort, render_template, request, redirect, url_for
 from extensions import db
 from sqlalchemy import or_
 import models
@@ -28,7 +30,7 @@ def products():
                     product_code=code,
                     image_url=image_url if image_url else None,
                     actual_price=float(actual_price) if actual_price else None,
-                    design_type_id=int(design_id)
+                    design_type_id=int(float(design_id))
                 )
                 db.session.add(new_product)
                 db.session.commit()
@@ -38,26 +40,32 @@ def products():
         elif action == 'add_ingredient':
             product_id = request.form.get('product_id')
             ingredient_id = request.form.get('ingredient_id')
-            quantity = request.form.get('quantity')
+            try:
+                parsed_product_id = int(float(product_id))
+                parsed_ingredient_id = int(float(ingredient_id))
+                quantity = float(request.form['quantity'])
+            except (KeyError, TypeError, ValueError):
+                abort(400, description="Valid product, ingredient, and quantity values are required.")
+            if not math.isfinite(quantity) or quantity <= 0:
+                abort(400, description="Recipe quantity must be a finite number greater than zero.")
 
-            if product_id and ingredient_id and quantity:
-                recipe_item = models.ProductIngredient(
-                    product_id=int(product_id),
-                    ingredient_id=int(ingredient_id),
-                    quantity=int(quantity)
-                )
-                db.session.add(recipe_item)
-                db.session.commit()
-                # Retain search and page params on redirect
-                page = request.args.get('page', 1, type=int)
-                q = request.args.get('q', '')
-                return redirect(url_for('products.products', page=page, q=q))
+            recipe_item = models.ProductIngredient(
+                product_id=parsed_product_id,
+                ingredient_id=parsed_ingredient_id,
+                quantity=quantity,
+            )
+            db.session.add(recipe_item)
+            db.session.commit()
+            # Retain search and page params on redirect
+            page = request.args.get('page', 1, type=int)
+            q = request.args.get('q', '')
+            return redirect(url_for('products.products', page=page, q=q))
 
         # Action: Delete a recipe item from an arrangement
         elif action == 'delete_recipe_item':
             item_id = request.form.get('recipe_item_id')
             if item_id:
-                item=models.ProductIngredient.query.get(int(item_id))
+                item=models.ProductIngredient.query.get(int(float(item_id)))
                 if item:
                     db.session.delete(item)
                     db.session.commit()
@@ -74,13 +82,13 @@ def products():
             design_id = request.form.get('design_type_id')
 
             if product_id and name and code and design_id:
-                product = models.Product.query.get(int(product_id))
+                product = models.Product.query.get(int(float(product_id)))
                 if product: 
                     product.name = name.strip()
                     product.product_code = code
                     product.actual_price = float(actual_price) if actual_price else None
                     product.image_url = image_url if image_url else None
-                    product.design_type_id = int(design_id)
+                    product.design_type_id = int(float(design_id))
                     db.session.commit()
             return redirect(url_for('products.products', page=page, q=search_query))
 
@@ -102,7 +110,7 @@ def products():
         )
 
     # Execute pagination (returns a Pagination object)
-    pagination = query.order_by(models.Product.id.desc()).paginate(
+    pagination = query.order_by(models.Product.name.asc()).paginate(
         page=page,
         per_page=per_page,
         error_out=False
@@ -110,8 +118,8 @@ def products():
 
     # Query products on page, all ingredients, and design fee styles
     products_on_page = pagination.items
-    all_ingredients = models.Ingredient.query.all()
-    all_design_types = models.DesignType.query.all()
+    all_ingredients = models.Ingredient.query.order_by(models.Ingredient.name.asc()).all()
+    all_design_types = models.DesignType.query.order_by(models.DesignType.name.asc()).all()
 
     return render_template(
         'products.html',

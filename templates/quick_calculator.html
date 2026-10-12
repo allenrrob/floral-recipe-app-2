@@ -7,6 +7,7 @@
 <form method="POST" action="{{ url_for('quick_calculator.quick_calculator') }}" class="form-stacked">
     <!-- Row count tracker to maintain form state -->
     <input type="hidden" name="row_count" value="{{ row_count }}">
+    <button type="submit" name="action" value="calculate" class="visually-hidden" aria-hidden="true" tabindex="-1">Calculate</button>
 
     <!-- Labor Style Selection -->
     <div style="margin-bottom: 1.5rem;">
@@ -22,6 +23,7 @@
     </div>
 
     <!-- Dynamic Stem & Supply Item Rows -->
+    <div class="table-responsive">
     <table class="data-table" style="margin-bottom: 1rem; width: 100%;">
         <thead>
             <tr>
@@ -53,6 +55,7 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
 
     <!-- Controls -->
     <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">

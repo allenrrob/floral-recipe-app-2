@@ -10,12 +10,14 @@ def import_recipes_from_excel(file_path):
     with app.app_context():
         # Pre-fetch Products by product_code (case-insensitive) for fast lookup
         products_lookup = {
-            p.product_code.strip().lower(): p.id for p in models.Product.query.all()
+            p.product_code.strip().lower(): p.id
+            for p in models.Product.query.order_by(models.Product.name.asc()).all()
         }
 
         # Pre-fetch Ingredients by name (case-insensitive) for fast lookup
         ingredients_lookup = {
-            i.name.strip().lower(): i.id for i in models.Ingredient.query.all()
+            i.name.strip().lower(): i.id
+            for i in models.Ingredient.query.order_by(models.Ingredient.name.asc()).all()
         }
 
         imported_count = 0
@@ -26,9 +28,9 @@ def import_recipes_from_excel(file_path):
             ing_val = str(row['Ingredient Name']).strip().lower() if pd.notna(row.get('Ingredient Name')) else None
             
             try:
-                quantity = int(row['Quantity']) if pd.notna(row.get('Quantity')) else 1
+                quantity = float(row['Quantity']) if pd.notna(row.get('Quantity')) else 1.0
             except ValueError:
-                quantity = 1
+                quantity = 1.0
 
             if not code_val or not ing_val:
                 print(f"⚠️ Row {index + 2}: Missing Product Code or Ingredient Name. Skipping.")
